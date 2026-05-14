@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
-import { Minus, Plus, MapPin, Calendar as CalendarIcon, Package, ShieldCheck, Star, Zap, Truck, Users, BadgeCheck, ExternalLink } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Minus, Plus, MapPin, Calendar as CalendarIcon, Package, ShieldCheck, Star, Zap, Truck, Users, BadgeCheck, ExternalLink, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -97,7 +97,7 @@ const SALE_END = new Date(Date.now() + 14 * 24 * 60 * 60 * 1000);
 
 function useCountdown(target: Date) {
   const [now, setNow] = useState(() => Date.now());
-  useMemo(() => {
+  useEffect(() => {
     const i = setInterval(() => setNow(Date.now()), 1000);
     return () => clearInterval(i);
   }, []);
@@ -113,6 +113,7 @@ function Index() {
   const [qty, setQty] = useState<Record<string, number>>({});
   const [form, setForm] = useState({ name: "", company: "", email: "", phone: "", buyerType: "", notes: "" });
   const [pickup, setPickup] = useState<Date | null>(null);
+  const [submitting, setSubmitting] = useState(false);
   const { d, h, m, s } = useCountdown(SALE_END);
 
   const lineItems = ALL_PRODUCTS
@@ -121,31 +122,45 @@ function Index() {
 
   const setQ = (id: string, v: number) => setQty((q) => ({ ...q, [id]: Math.max(0, v) }));
 
-  const onSubmit = (e: React.FormEvent) => {
+  const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!form.name || !form.email) return toast.error("Name and email are required.");
     if (lineItems.length === 0) return toast.error("Select at least one product you're interested in.");
 
-    const body = [
-      "DeepCells × TechDirect Liquidation Quote Request",
-      "",
-      `Name: ${form.name}`,
-      `Company: ${form.company}`,
-      `Email: ${form.email}`,
-      `Phone: ${form.phone}`,
-      `Buyer type: ${form.buyerType}`,
-      `Pickup window: ${pickup ? formatPickup(pickup) : "(not specified)"}`,
-      "",
-      "Items of interest:",
-      ...lineItems.map((p) => `  ${p.q} × ${p.name} (${p.spec})`),
-      "",
-      `Notes: ${form.notes}`,
-    ].join("\n");
+    const itemsText = lineItems
+      .map((p) => `  ${p.q} × ${p.name} (${p.spec})`)
+      .join("\n");
 
-    // Email destination provided later — open mailto draft for now.
-    const mailto = `mailto:?subject=${encodeURIComponent("DeepCells Liquidation — Quote Request")}&body=${encodeURIComponent(body)}`;
-    window.location.href = mailto;
-    toast.success("Quote request prepared. Confirm in your email client to send.");
+    const payload = {
+      _cc: "joshua.b@bigbattery.com",
+      name: form.name,
+      company: form.company,
+      email: form.email,
+      phone: form.phone,
+      buyerType: form.buyerType,
+      pickup: pickup ? formatPickup(pickup) : "(not specified)",
+      notes: form.notes,
+      items: itemsText,
+    };
+
+    setSubmitting(true);
+    try {
+      const res = await fetch("https://formspree.io/f/xqenvkjo", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Accept: "application/json" },
+        body: JSON.stringify(payload),
+      });
+      if (!res.ok) throw new Error(`Formspree returned ${res.status}`);
+      toast.success("Quote request sent. We'll be in touch within one business day.");
+      setForm({ name: "", company: "", email: "", phone: "", buyerType: "", notes: "" });
+      setPickup(null);
+      setQty({});
+    } catch (err) {
+      console.error(err);
+      toast.error("Something went wrong sending your request. Please try again.");
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -170,10 +185,10 @@ function Index() {
                 LIVE LIQUIDATION EVENT · ENDS IN 2 WEEKS
               </div>
               <h1 className="mt-5 text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-[#0077ff]">
-                DeepCells | TechDirect<br />Liquidation Sale
+                Deepcells | BatteryEVO Liquidation Sale
               </h1>
               <p className="mt-5 max-w-2xl text-lg text-muted-foreground">
-                DeepCells is hosting an exclusive liquidation event of TechDirect inventory, 30-40% OFF & partnered and processed with TechDirect. Select home backup, golf cart, RV, and industrial lithium batteries. First-come, first-served
+                Deepcells is hosting an exclusive liquidation sale of BatteryEVO inventory at 30-40% OFF. Partnered and processed with TechDirect you can select home backup, golf cart, RV, and industrial lithium batteries. First-come, first-served.
               </p>
 
               <div className="mt-7 grid grid-cols-4 gap-3 max-w-md">
@@ -267,6 +282,14 @@ function Index() {
                     <div className="text-xs text-muted-foreground">{p.spec}</div>
                   </div>
                   <div className="text-sm font-semibold tabular-nums">Qty {p.q}</div>
+                  <button
+                    type="button"
+                    onClick={() => setQ(p.id, 0)}
+                    aria-label={`Remove ${p.name}`}
+                    className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-red-400/30 to-red-600/30 text-red-600 transition hover:from-red-400/50 hover:to-red-600/50 focus:outline-none focus:ring-2 focus:ring-red-400/50 focus:ring-offset-2"
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </button>
                 </div>
               ))}
             </div>
@@ -287,14 +310,15 @@ function Index() {
                   <option>Reseller</option><option>Installer</option><option>Contractor</option><option>End user / bulk buyer</option><option>Other</option>
                 </select>
               </Field>
-              <Field label="Pickup window (optional, local pickup only)">
+              <Field label="Pickup Window (Optional)">
                 <PickupPicker value={pickup} onChange={setPickup} />
+                <p className="mt-1 text-xs text-muted-foreground">For local pickup only</p>
               </Field>
               <div className="sm:col-span-2"><Field label="Notes"><Textarea rows={3} value={form.notes} onChange={(e) => setForm({ ...form, notes: e.target.value })} maxLength={1000} placeholder="Anything we should know?" /></Field></div>
             </div>
 
-            <Button type="submit" size="lg" className="mt-6 w-full bg-gradient-to-r from-primary to-accent text-primary-foreground hover:opacity-90" style={{ boxShadow: "var(--shadow-glow)" }}>
-              Request quote
+            <Button type="submit" size="lg" disabled={submitting} className="mt-6 w-full bg-gradient-to-r from-primary to-accent text-primary-foreground hover:opacity-90" style={{ boxShadow: "var(--shadow-glow)" }}>
+              {submitting ? "Sending…" : "Request quote"}
             </Button>
             <p className="mt-3 text-center text-xs text-muted-foreground">
               By submitting, you'll be contacted by DeepCells with a quote and availability. Pickup at {`9667 Owensmouth Ave, Chatsworth, CA 91311`}.
@@ -471,10 +495,10 @@ function TrustCard() {
     { icon: ShieldCheck, label: "Authorized Inventory", value: "Direct from TechDirect", sub: "Authentic, warrantied lithium batteries" },
   ];
   const [i, setI] = useState(0);
-  useMemo(() => {
-    const t = setInterval(() => setI((x) => (x + 1) % slides.length), 3500);
+  useEffect(() => {
+    const t = setInterval(() => setI((x) => (x + 1) % slides.length), 3000);
     return () => clearInterval(t);
-  }, []);
+  }, [slides.length]);
   const S = slides[i];
   return (
     <div className="relative rounded-2xl border border-border bg-card/70 p-6 backdrop-blur" style={{ boxShadow: "var(--shadow-elegant)" }}>
