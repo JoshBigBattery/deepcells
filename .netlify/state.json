@@ -1,0 +1,21 @@
+{
+	"dbConnectionString": "postgres://localhost:58821/postgres",
+	"geolocation": {
+		"data": {
+			"city": "Commerce",
+			"country": {
+				"code": "US",
+				"name": "United States"
+			},
+			"subdivision": {
+				"code": "TX",
+				"name": "Texas"
+			},
+			"timezone": "America/Chicago",
+			"latitude": 33.2434,
+			"longitude": -95.911,
+			"postalCode": "75428"
+		},
+		"timestamp": 1778789911132
+	}
+}
