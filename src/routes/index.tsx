@@ -458,8 +458,8 @@ function TrustCard() {
 
 function Stat({ v, l }: { v: string; l: string }) {
   return (
-    <div className="rounded-lg border border-border bg-background/40 p-2">
-      <div className="text-sm font-bold text-primary">{v}</div>
+    <div className="rounded-lg border border-border bg-background p-2">
+      <div className="text-sm font-bold text-[var(--promo)]">{v}</div>
       <div className="text-[10px] uppercase tracking-wider text-muted-foreground">{l}</div>
     </div>
   );
