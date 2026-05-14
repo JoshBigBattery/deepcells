@@ -29,7 +29,7 @@ export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
       { title: "DeepCells × TechDirect Liquidation — Lithium Battery Sale" },
-      { name: "description", content: "30–40% OFF select lithium battery inventory. Home backup, golf cart, RV & industrial. Hosted by DeepCells, processed with TechDirect. Ends in 2 weeks." },
+      { name: "description", content: "30–50% OFF select lithium battery inventory. Home backup, golf cart, RV & industrial. Hosted by DeepCells, processed with TechDirect. Ends in 2 weeks." },
     ],
   }),
 });
@@ -128,49 +128,35 @@ function Index() {
 
   const setQ = (id: string, v: number) => setQty((q) => ({ ...q, [id]: Math.max(0, v) }));
 
-  const [submitting, setSubmitting] = useState(false);
-
-  const onSubmit = async (e: React.FormEvent) => {
+  const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!form.name || !form.email) return toast.error("Name and email are required.");
     if (lineItems.length === 0) return toast.error("Add at least one product to your order.");
     if (!meetsMin) return toast.error(`Minimum order is ${fmt(MIN_ORDER)}. You're at ${fmt(subtotal)}.`);
 
-    const itemsText = lineItems
-      .map((p) => `  ${p.q} × ${p.name} (${p.spec}) — ${fmt(p.sale)} ea = ${fmt(p.sale * p.q)}`)
-      .join("\n");
+    const body = [
+      "DeepCells × TechDirect Liquidation Order Request",
+      "",
+      `Name: ${form.name}`,
+      `Company: ${form.company}`,
+      `Email: ${form.email}`,
+      `Phone: ${form.phone}`,
+      `Buyer type: ${form.buyerType}`,
+      "",
+      "Items:",
+      ...lineItems.map((p) => `  ${p.q} × ${p.name} (${p.spec}) — ${fmt(p.sale)} ea = ${fmt(p.sale * p.q)}`),
+      "",
+      `Subtotal: ${fmt(subtotal)}`,
+      `Retail: ${fmt(retailTotal)}`,
+      `Savings: ${fmt(savings)}`,
+      "",
+      `Notes: ${form.notes}`,
+    ].join("\n");
 
-    const payload = {
-      _cc: "joshua.b@bigbattery.com,kunal.d@bigbattery.com",
-      name: form.name,
-      company: form.company,
-      email: form.email,
-      phone: form.phone,
-      buyerType: form.buyerType,
-      notes: form.notes,
-      items: itemsText,
-      subtotal: fmt(subtotal),
-      retail: fmt(retailTotal),
-      savings: fmt(savings),
-    };
-
-    setSubmitting(true);
-    try {
-      const res = await fetch("https://formspree.io/f/xqenvkjo", {
-        method: "POST",
-        headers: { "Content-Type": "application/json", Accept: "application/json" },
-        body: JSON.stringify(payload),
-      });
-      if (!res.ok) throw new Error(`Formspree returned ${res.status}`);
-      toast.success("Order request sent. We'll be in touch within one business day.");
-      setForm({ name: "", company: "", email: "", phone: "", buyerType: "", notes: "" });
-      setQty({});
-    } catch (err) {
-      console.error(err);
-      toast.error("Something went wrong sending your request. Please try again.");
-    } finally {
-      setSubmitting(false);
-    }
+    // Email destination provided later — open mailto draft for now.
+    const mailto = `mailto:?subject=${encodeURIComponent("DeepCells Liquidation — Order Request")}&body=${encodeURIComponent(body)}`;
+    window.location.href = mailto;
+    toast.success("Order request prepared. Confirm in your email client to send.");
   };
 
   return (
@@ -198,7 +184,7 @@ function Index() {
                 DeepCells | TechDirect<br />Liquidation Sale
               </h1>
               <p className="mt-5 max-w-2xl text-lg text-muted-foreground">
-                DeepCells is hosting an exclusive liquidation event of TechDirect inventory, 30–40% OFF & partnered and processed with TechDirect. Select home backup, golf cart, RV, and industrial lithium batteries. First-come, first-served
+                DeepCells is hosting an exclusive liquidation event of TechDirect inventory, 30–50% OFF & partnered and processed with TechDirect. Select home backup, golf cart, RV, and industrial lithium batteries. First-come, first-served
               </p>
 
               <div className="mt-7 grid grid-cols-4 gap-3 max-w-md">
@@ -336,8 +322,8 @@ function Index() {
               <span className="font-bold tabular-nums text-[var(--promo)]">{fmt(subtotal)}</span>
             </div>
 
-            <Button type="submit" size="lg" disabled={submitting} className="mt-5 w-full bg-gradient-to-r from-primary to-accent text-primary-foreground hover:opacity-90" style={{ boxShadow: "var(--shadow-glow)" }}>
-              {submitting ? "Sending…" : "Submit order request"}
+            <Button type="submit" size="lg" className="mt-5 w-full bg-gradient-to-r from-primary to-accent text-primary-foreground hover:opacity-90" style={{ boxShadow: "var(--shadow-glow)" }}>
+              Submit order request
             </Button>
             <p className="mt-3 text-center text-xs text-muted-foreground">
               By submitting, you'll be contacted by DeepCells to confirm your order. Pickup at {`9667 Owensmouth Ave, Chatsworth, CA 91311`}.
