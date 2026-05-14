@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { Minus, Plus, MapPin, Calendar as CalendarIcon, Package, ShieldCheck, Star, Zap, Truck, Users, BadgeCheck, ExternalLink, Trash2 } from "lucide-react";
+import { Minus, Plus, MapPin, Calendar as CalendarIcon, Package, ShieldCheck, Star, Zap, Truck, Users, BadgeCheck, ExternalLink, Trash2, House, Caravan, Forklift } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -46,12 +46,39 @@ type Product = {
   off: number;
 };
 
-type Category = { name: string; icon: typeof Zap; products: Product[] };
+type IconComponent = React.ComponentType<{ className?: string }>;
+type Category = { name: string; icon: IconComponent; products: Product[] };
+
+function GolfCartIcon({ className }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+      aria-hidden="true"
+    >
+      {/* roof */}
+      <path d="M3 5h12" />
+      {/* roof supports */}
+      <path d="M3 5v6" />
+      <path d="M15 5v6" />
+      {/* cabin and cargo bed */}
+      <path d="M3 11h13l3 2h2v2H3z" />
+      {/* wheels */}
+      <circle cx="7" cy="17.5" r="1.7" />
+      <circle cx="17" cy="17.5" r="1.7" />
+    </svg>
+  );
+}
 
 const CATEGORIES: Category[] = [
   {
     name: "Home Backup Systems",
-    icon: Zap,
+    icon: House,
     products: [
       { id: "walrus-g3", name: "Walrus G3", spec: "12.5 kVA Inverter · 22 kWh LFP", blurb: "Perfect for small to medium homes with central A/C under 3 tons.", image: walrusG3, retail: 14900, sale: 9685, off: 35 },
       { id: "walrus-g4-plus", name: "Walrus G4 PLUS", spec: "16.5 kVA Inverter · 23 kWh LFP", blurb: "Larger inverter for homes with high-draw appliances and electric water heaters.", image: walrusG4Plus, retail: 17900, sale: 11635, off: 35 },
@@ -61,7 +88,7 @@ const CATEGORIES: Category[] = [
   },
   {
     name: "Golf Cart Batteries",
-    icon: Truck,
+    icon: GolfCartIcon,
     products: [
       { id: "eagle-24v", name: "24V Eagle", spec: "24V Lithium · Drop-in", blurb: "Light, compact lithium pack for 24V carts and utility vehicles.", image: eagle, retail: 1899, sale: 1234, off: 35 },
       { id: "reindeer-36v", name: "36V Reindeer", spec: "36V Lithium · Long-range", blurb: "All-day range upgrade for classic 36V golf carts.", image: reindeer, retail: 2499, sale: 1624, off: 35 },
@@ -73,7 +100,7 @@ const CATEGORIES: Category[] = [
   },
   {
     name: "RV Batteries",
-    icon: Truck,
+    icon: Caravan,
     products: [
       { id: "owl-lite-12v", name: "12V Owl Lite", spec: "12V LiFePO4 · 100Ah class", blurb: "Lightweight 12V house battery for RVs, vans, and trailers.", image: owlLite, retail: 899, sale: 584, off: 35 },
       { id: "razorback-12v", name: "12V Razorback", spec: "12V LiFePO4 · High capacity", blurb: "High-capacity 12V LFP for off-grid coaches and overlanders.", image: razorback, retail: 1299, sale: 844, off: 35 },
@@ -82,7 +109,7 @@ const CATEGORIES: Category[] = [
   },
   {
     name: "Industrial Batteries",
-    icon: Package,
+    icon: Forklift,
     products: [
       { id: "owl-lite-ind", name: "12V Owl Lite (Industrial)", spec: "12V LFP · Telecom & light duty", blurb: "Telecom and light industrial 12V LFP.", image: owlLite, retail: 999, sale: 649, off: 35 },
       { id: "reindeer-36v-ind", name: "36V Reindeer (Industrial)", spec: "36V LFP · Material handling", blurb: "Material handling and floor scrubber lithium pack.", image: reindeer, retail: 3499, sale: 2274, off: 35 },
@@ -93,7 +120,9 @@ const CATEGORIES: Category[] = [
 ];
 
 const ALL_PRODUCTS = CATEGORIES.flatMap((c) => c.products);
-const SALE_END = new Date(Date.now() + 14 * 24 * 60 * 60 * 1000);
+// Sale ends at midnight Pacific (PDT) at the end of May 28, 2026
+// — i.e. 00:00 Pacific on May 29 = 07:00 UTC.
+const SALE_END = new Date("2026-05-29T07:00:00Z");
 
 function useCountdown(target: Date) {
   const [now, setNow] = useState(() => Date.now());
@@ -172,7 +201,7 @@ function Index() {
         <div className="absolute inset-0 opacity-60 [background-image:linear-gradient(to_right,oklch(0.88_0.015_250)_1px,transparent_1px),linear-gradient(to_bottom,oklch(0.88_0.015_250)_1px,transparent_1px)] [background-size:48px_48px] [mask-image:radial-gradient(ellipse_at_center,black_40%,transparent_85%)]" />
         <div className="relative mx-auto max-w-6xl px-6 py-10 sm:py-14">
           <nav className="flex items-center justify-between">
-            <img src={logo} alt="DeepCells" className="h-12 sm:h-14 w-auto" />
+            <img src={logo} alt="DeepCells" className="h-20 sm:h-24 lg:h-28 w-auto" />
             <a href="#order" className="hidden sm:inline-flex items-center gap-2 rounded-full border border-border bg-card/80 px-4 py-2 text-sm text-foreground/80 backdrop-blur hover:bg-card transition">
               Jump to order <Zap className="h-4 w-4 text-primary" />
             </a>
@@ -214,8 +243,9 @@ function Index() {
           </div>
 
           {/* Quick facts */}
-          <div className="mt-12 grid gap-3 sm:grid-cols-3">
+          <div className="mt-12 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
             {[
+              { i: BadgeCheck, l: "All LiFePO4 Batteries", v: "30-40% OFF", color: "text-primary" },
               { i: CalendarIcon, l: "Sale ends", v: "In 2 weeks", color: "text-[var(--urgency)]" },
               { i: MapPin, l: "LOCAL PICKUP", v: "Chatsworth, CA", color: "text-primary" },
               { i: ShieldCheck, l: "Processed by", v: "TechDirect", color: "text-primary" },
@@ -234,14 +264,9 @@ function Index() {
 
       {/* Catalog */}
       <main id="catalog" className="mx-auto max-w-6xl px-6 py-16">
-        <div className="flex items-end justify-between gap-4 flex-wrap">
-          <div>
-            <h2 className="text-3xl sm:text-4xl font-bold tracking-tight">Select Products</h2>
-            <p className="mt-2 text-muted-foreground">Set quantities below. Your order summary updates live.</p>
-          </div>
-          <div className="text-sm text-muted-foreground max-w-2xl">
-            Select Products
-          </div>
+        <div>
+          <h2 className="text-3xl sm:text-4xl font-bold tracking-tight">Select Products</h2>
+          <p className="mt-2 text-muted-foreground">Set quantities below. Your order summary updates live.</p>
         </div>
 
         <div className="mt-10 space-y-14">
