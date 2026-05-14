@@ -1,13 +1,14 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
-import { Minus, Plus, MapPin, Calendar, Package, ShieldCheck, Star, Zap, Truck, Users, BadgeCheck, ExternalLink } from "lucide-react";
+import { Minus, Plus, MapPin, Calendar as CalendarIcon, Package, ShieldCheck, Star, Zap, Truck, Users, BadgeCheck, ExternalLink } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { Calendar } from "@/components/ui/calendar";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { toast } from "sonner";
 import { Toaster } from "@/components/ui/sonner";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 
 import logo from "@/assets/deepcells-logo.svg";
 import walrusG3 from "@/assets/products/walrus-g3.webp";
@@ -29,7 +30,7 @@ export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
       { title: "DeepCells × TechDirect Liquidation — Lithium Battery Sale" },
-      { name: "description", content: "30–50% OFF select lithium battery inventory. Home backup, golf cart, RV & industrial. Hosted by DeepCells, processed with TechDirect. Ends in 2 weeks." },
+      { name: "description", content: "30-40% OFF select lithium battery inventory. Home backup, golf cart, RV & industrial. Hosted by DeepCells, processed with TechDirect. Ends in 2 weeks." },
     ],
   }),
 });
@@ -92,7 +93,6 @@ const CATEGORIES: Category[] = [
 ];
 
 const ALL_PRODUCTS = CATEGORIES.flatMap((c) => c.products);
-const MIN_ORDER = 5000;
 const SALE_END = new Date(Date.now() + 14 * 24 * 60 * 60 * 1000);
 
 function useCountdown(target: Date) {
@@ -109,54 +109,43 @@ function useCountdown(target: Date) {
   return { d, h, m, s };
 }
 
-function fmt(n: number) {
-  return n.toLocaleString("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 });
-}
-
 function Index() {
   const [qty, setQty] = useState<Record<string, number>>({});
   const [form, setForm] = useState({ name: "", company: "", email: "", phone: "", buyerType: "", notes: "" });
+  const [pickup, setPickup] = useState<Date | null>(null);
   const { d, h, m, s } = useCountdown(SALE_END);
 
   const lineItems = ALL_PRODUCTS
     .map((p) => ({ ...p, q: qty[p.id] || 0 }))
     .filter((p) => p.q > 0);
-  const subtotal = lineItems.reduce((acc, p) => acc + p.sale * p.q, 0);
-  const retailTotal = lineItems.reduce((acc, p) => acc + p.retail * p.q, 0);
-  const savings = retailTotal - subtotal;
-  const meetsMin = subtotal >= MIN_ORDER;
 
   const setQ = (id: string, v: number) => setQty((q) => ({ ...q, [id]: Math.max(0, v) }));
 
   const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!form.name || !form.email) return toast.error("Name and email are required.");
-    if (lineItems.length === 0) return toast.error("Add at least one product to your order.");
-    if (!meetsMin) return toast.error(`Minimum order is ${fmt(MIN_ORDER)}. You're at ${fmt(subtotal)}.`);
+    if (lineItems.length === 0) return toast.error("Select at least one product you're interested in.");
 
     const body = [
-      "DeepCells × TechDirect Liquidation Order Request",
+      "DeepCells × TechDirect Liquidation Quote Request",
       "",
       `Name: ${form.name}`,
       `Company: ${form.company}`,
       `Email: ${form.email}`,
       `Phone: ${form.phone}`,
       `Buyer type: ${form.buyerType}`,
+      `Pickup window: ${pickup ? formatPickup(pickup) : "(not specified)"}`,
       "",
-      "Items:",
-      ...lineItems.map((p) => `  ${p.q} × ${p.name} (${p.spec}) — ${fmt(p.sale)} ea = ${fmt(p.sale * p.q)}`),
-      "",
-      `Subtotal: ${fmt(subtotal)}`,
-      `Retail: ${fmt(retailTotal)}`,
-      `Savings: ${fmt(savings)}`,
+      "Items of interest:",
+      ...lineItems.map((p) => `  ${p.q} × ${p.name} (${p.spec})`),
       "",
       `Notes: ${form.notes}`,
     ].join("\n");
 
     // Email destination provided later — open mailto draft for now.
-    const mailto = `mailto:?subject=${encodeURIComponent("DeepCells Liquidation — Order Request")}&body=${encodeURIComponent(body)}`;
+    const mailto = `mailto:?subject=${encodeURIComponent("DeepCells Liquidation — Quote Request")}&body=${encodeURIComponent(body)}`;
     window.location.href = mailto;
-    toast.success("Order request prepared. Confirm in your email client to send.");
+    toast.success("Quote request prepared. Confirm in your email client to send.");
   };
 
   return (
@@ -184,7 +173,7 @@ function Index() {
                 DeepCells | TechDirect<br />Liquidation Sale
               </h1>
               <p className="mt-5 max-w-2xl text-lg text-muted-foreground">
-                DeepCells is hosting an exclusive liquidation event of TechDirect inventory, 30–50% OFF & partnered and processed with TechDirect. Select home backup, golf cart, RV, and industrial lithium batteries. First-come, first-served
+                DeepCells is hosting an exclusive liquidation event of TechDirect inventory, 30-40% OFF & partnered and processed with TechDirect. Select home backup, golf cart, RV, and industrial lithium batteries. First-come, first-served
               </p>
 
               <div className="mt-7 grid grid-cols-4 gap-3 max-w-md">
@@ -210,10 +199,9 @@ function Index() {
           </div>
 
           {/* Quick facts */}
-          <div className="mt-12 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="mt-12 grid gap-3 sm:grid-cols-3">
             {[
-              { i: Package, l: "Min. order", v: "$5,000", color: "text-primary" },
-              { i: Calendar, l: "Sale ends", v: "In 2 weeks", color: "text-[var(--urgency)]" },
+              { i: CalendarIcon, l: "Sale ends", v: "In 2 weeks", color: "text-[var(--urgency)]" },
               { i: MapPin, l: "LOCAL PICKUP", v: "Chatsworth, CA", color: "text-primary" },
               { i: ShieldCheck, l: "Processed by", v: "TechDirect", color: "text-primary" },
             ].map((f) => (
@@ -262,8 +250,8 @@ function Index() {
         {/* Order summary + form */}
         <section id="order" className="mt-20 grid gap-8 lg:grid-cols-[1fr_1.1fr]">
           <div className="rounded-2xl border border-border bg-card p-6 sm:p-8" style={{ boxShadow: "var(--shadow-elegant)" }}>
-            <h3 className="text-2xl font-bold">Order summary</h3>
-            <p className="mt-1 text-sm text-muted-foreground">Minimum order {fmt(MIN_ORDER)}. First-come, first-served.</p>
+            <h3 className="text-2xl font-bold">Items you're interested in</h3>
+            <p className="mt-1 text-sm text-muted-foreground">We'll follow up with a quote and availability.</p>
 
             <div className="mt-6 divide-y divide-border">
               {lineItems.length === 0 && (
@@ -276,31 +264,17 @@ function Index() {
                   <img src={p.image} alt="" className="h-12 w-12 rounded-md object-cover bg-muted" />
                   <div className="min-w-0 flex-1">
                     <div className="truncate text-sm font-medium">{p.name}</div>
-                    <div className="text-xs text-muted-foreground">{p.q} × {fmt(p.sale)}</div>
+                    <div className="text-xs text-muted-foreground">{p.spec}</div>
                   </div>
-                  <div className="text-sm font-semibold tabular-nums">{fmt(p.sale * p.q)}</div>
+                  <div className="text-sm font-semibold tabular-nums">Qty {p.q}</div>
                 </div>
               ))}
             </div>
-
-            {lineItems.length > 0 && (
-              <div className="mt-5 space-y-2 rounded-xl bg-muted/40 p-4 text-sm">
-                <Row label="Retail value" value={fmt(retailTotal)} muted />
-                <Row label="Your savings" value={`− ${fmt(savings)}`} accent />
-                <div className="my-2 h-px bg-border" />
-                <Row label="Subtotal" value={fmt(subtotal)} bold />
-                {!meetsMin && (
-                  <p className="pt-2 text-xs text-destructive">
-                    Add {fmt(MIN_ORDER - subtotal)} more to meet the {fmt(MIN_ORDER)} minimum.
-                  </p>
-                )}
-              </div>
-            )}
           </div>
 
           <form onSubmit={onSubmit} className="rounded-2xl border border-border bg-card p-6 sm:p-8" style={{ boxShadow: "var(--shadow-elegant)" }}>
-            <h3 className="text-2xl font-bold">Reserve your order</h3>
-            <p className="mt-1 text-sm text-muted-foreground">We'll confirm pricing, availability, and pickup within one business day.</p>
+            <h3 className="text-2xl font-bold">Request a quote</h3>
+            <p className="mt-1 text-sm text-muted-foreground">We'll reach out with pricing, availability, and pickup details within one business day.</p>
 
             <div className="mt-6 grid gap-4 sm:grid-cols-2">
               <Field label="Full name *"><Input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} required maxLength={120} /></Field>
@@ -313,20 +287,17 @@ function Index() {
                   <option>Reseller</option><option>Installer</option><option>Contractor</option><option>End user / bulk buyer</option><option>Other</option>
                 </select>
               </Field>
-              <Field label="Pickup window"><Input placeholder="e.g. next week, afternoons" onChange={(e) => setForm({ ...form, notes: `Pickup: ${e.target.value}. ${form.notes}` })} maxLength={120} /></Field>
+              <Field label="Pickup window (optional, local pickup only)">
+                <PickupPicker value={pickup} onChange={setPickup} />
+              </Field>
               <div className="sm:col-span-2"><Field label="Notes"><Textarea rows={3} value={form.notes} onChange={(e) => setForm({ ...form, notes: e.target.value })} maxLength={1000} placeholder="Anything we should know?" /></Field></div>
             </div>
 
-            <div className="mt-6 flex items-center justify-between rounded-lg border border-border bg-muted/30 p-3 text-sm">
-              <span className="text-muted-foreground">Order subtotal</span>
-              <span className="font-bold tabular-nums text-[var(--promo)]">{fmt(subtotal)}</span>
-            </div>
-
-            <Button type="submit" size="lg" className="mt-5 w-full bg-gradient-to-r from-primary to-accent text-primary-foreground hover:opacity-90" style={{ boxShadow: "var(--shadow-glow)" }}>
-              Submit order request
+            <Button type="submit" size="lg" className="mt-6 w-full bg-gradient-to-r from-primary to-accent text-primary-foreground hover:opacity-90" style={{ boxShadow: "var(--shadow-glow)" }}>
+              Request quote
             </Button>
             <p className="mt-3 text-center text-xs text-muted-foreground">
-              By submitting, you'll be contacted by DeepCells to confirm your order. Pickup at {`9667 Owensmouth Ave, Chatsworth, CA 91311`}.
+              By submitting, you'll be contacted by DeepCells with a quote and availability. Pickup at {`9667 Owensmouth Ave, Chatsworth, CA 91311`}.
             </p>
           </form>
         </section>
@@ -350,12 +321,103 @@ function Index() {
   );
 }
 
-function Row({ label, value, bold, accent, muted }: { label: string; value: string; bold?: boolean; accent?: boolean; muted?: boolean }) {
+function formatPickup(d: Date) {
+  return d.toLocaleString("en-US", {
+    weekday: "short",
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+    hour: "numeric",
+    minute: "2-digit",
+    hour12: true,
+  });
+}
+
+function PickupPicker({ value, onChange }: { value: Date | null; onChange: (d: Date | null) => void }) {
+  const [open, setOpen] = useState(false);
+  const initial = value ?? new Date();
+  const [draftDate, setDraftDate] = useState<Date>(initial);
+  const [hour, setHour] = useState<number>(((initial.getHours() + 11) % 12) + 1);
+  const [minute, setMinute] = useState<number>(Math.floor(initial.getMinutes() / 5) * 5);
+  const [ampm, setAmpm] = useState<"AM" | "PM">(initial.getHours() >= 12 ? "PM" : "AM");
+
+  const apply = () => {
+    const d = new Date(draftDate);
+    const h24 = (hour % 12) + (ampm === "PM" ? 12 : 0);
+    d.setHours(h24, minute, 0, 0);
+    onChange(d);
+    setOpen(false);
+  };
+
+  const clear = () => {
+    onChange(null);
+    setOpen(false);
+  };
+
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
   return (
-    <div className={`flex items-center justify-between ${bold ? "text-base font-bold" : ""}`}>
-      <span className={muted ? "text-muted-foreground" : ""}>{label}</span>
-      <span className={`tabular-nums ${accent ? "text-[var(--promo)] font-semibold" : ""}`}>{value}</span>
-    </div>
+    <Popover open={open} onOpenChange={setOpen}>
+      <PopoverTrigger asChild>
+        <Button
+          type="button"
+          variant="outline"
+          className="h-10 w-full justify-start font-normal"
+        >
+          <CalendarIcon className="mr-2 h-4 w-4 opacity-70" />
+          {value ? formatPickup(value) : <span className="text-muted-foreground">Pick a date and time</span>}
+        </Button>
+      </PopoverTrigger>
+      <PopoverContent className="w-auto p-0" align="start">
+        <Calendar
+          mode="single"
+          selected={draftDate}
+          onSelect={(d) => d && setDraftDate(d)}
+          disabled={(d) => d < today}
+          autoFocus
+        />
+        <div className="border-t border-border p-3 space-y-3">
+          <div className="flex items-center gap-2">
+            <span className="text-xs uppercase tracking-wider text-muted-foreground w-12">Time</span>
+            <select
+              value={hour}
+              onChange={(e) => setHour(parseInt(e.target.value, 10))}
+              className="flex h-9 rounded-md border border-input bg-background px-2 text-sm"
+              aria-label="Hour"
+            >
+              {Array.from({ length: 12 }, (_, i) => i + 1).map((h) => (
+                <option key={h} value={h}>{h}</option>
+              ))}
+            </select>
+            <span className="text-muted-foreground">:</span>
+            <select
+              value={minute}
+              onChange={(e) => setMinute(parseInt(e.target.value, 10))}
+              className="flex h-9 rounded-md border border-input bg-background px-2 text-sm"
+              aria-label="Minute"
+            >
+              {Array.from({ length: 12 }, (_, i) => i * 5).map((m) => (
+                <option key={m} value={m}>{m.toString().padStart(2, "0")}</option>
+              ))}
+            </select>
+            <select
+              value={ampm}
+              onChange={(e) => setAmpm(e.target.value as "AM" | "PM")}
+              className="flex h-9 rounded-md border border-input bg-background px-2 text-sm"
+              aria-label="AM or PM"
+            >
+              <option value="AM">AM</option>
+              <option value="PM">PM</option>
+            </select>
+          </div>
+          <div className="flex items-center justify-between gap-2">
+            <Button type="button" variant="ghost" size="sm" onClick={clear}>Clear</Button>
+            <Button type="button" size="sm" onClick={apply}>Set pickup</Button>
+          </div>
+        </div>
+      </PopoverContent>
+    </Popover>
   );
 }
 
