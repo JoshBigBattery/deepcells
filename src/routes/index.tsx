@@ -160,36 +160,36 @@ function Index() {
 
   return (
     <div className="min-h-screen bg-background text-foreground">
-      <Toaster theme="dark" position="top-center" />
+      <Toaster position="top-center" />
 
       {/* Hero */}
       <header className="relative overflow-hidden" style={{ background: "var(--gradient-hero)" }}>
-        <div className="absolute inset-0 opacity-[0.07] [background-image:linear-gradient(to_right,white_1px,transparent_1px),linear-gradient(to_bottom,white_1px,transparent_1px)] [background-size:48px_48px]" />
+        <div className="absolute inset-0 opacity-60 [background-image:linear-gradient(to_right,oklch(0.88_0.015_250)_1px,transparent_1px),linear-gradient(to_bottom,oklch(0.88_0.015_250)_1px,transparent_1px)] [background-size:48px_48px] [mask-image:radial-gradient(ellipse_at_center,black_40%,transparent_85%)]" />
         <div className="relative mx-auto max-w-6xl px-6 py-10 sm:py-14">
           <nav className="flex items-center justify-between">
-            <img src={logo} alt="DeepCells" className="h-12 sm:h-14 w-auto drop-shadow-[0_0_18px_oklch(0.72_0.2_245/0.6)]" />
-            <a href="#order" className="hidden sm:inline-flex items-center gap-2 rounded-full border border-border/60 bg-card/40 px-4 py-2 text-sm text-foreground/80 backdrop-blur hover:bg-card/80 transition">
+            <img src={logo} alt="DeepCells" className="h-12 sm:h-14 w-auto" />
+            <a href="#order" className="hidden sm:inline-flex items-center gap-2 rounded-full border border-border bg-card/80 px-4 py-2 text-sm text-foreground/80 backdrop-blur hover:bg-card transition">
               Jump to order <Zap className="h-4 w-4 text-primary" />
             </a>
           </nav>
 
           <div className="mt-10 grid items-center gap-10 lg:grid-cols-[1.2fr_1fr]">
             <div>
-              <div className="inline-flex items-center gap-2 rounded-full border border-primary/40 bg-primary/10 px-3 py-1 text-xs font-medium text-primary">
-                <span className="relative flex h-2 w-2"><span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-primary opacity-75" /><span className="relative inline-flex h-2 w-2 rounded-full bg-primary" /></span>
+              <div className="inline-flex items-center gap-2 rounded-full border border-[var(--urgency)]/40 bg-[var(--urgency)]/10 px-3 py-1 text-xs font-semibold text-[var(--urgency)]">
+                <span className="relative flex h-2 w-2"><span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[var(--urgency)] opacity-75" /><span className="relative inline-flex h-2 w-2 rounded-full bg-[var(--urgency)]" /></span>
                 LIVE LIQUIDATION EVENT · ENDS IN 2 WEEKS
               </div>
               <h1 className="mt-5 text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight">
                 Lithium batteries at <span className="bg-clip-text text-transparent" style={{ backgroundImage: "var(--gradient-primary)" }}>liquidation prices.</span>
               </h1>
               <p className="mt-5 max-w-2xl text-lg text-muted-foreground">
-                <span className="text-foreground font-semibold">DeepCells</span> is hosting an exclusive liquidation event of <span className="text-foreground font-semibold">TechDirect</span> inventory — <span className="text-primary font-semibold">30–40% OFF</span> select home backup, golf cart, RV, and industrial lithium batteries. First-come, first-served.
+                <span className="text-foreground font-semibold">DeepCells</span> is hosting an exclusive liquidation event of <span className="text-foreground font-semibold">TechDirect</span> inventory — <span className="font-bold text-[var(--promo)]">30–40% OFF</span> select home backup, golf cart, RV, and industrial lithium batteries. First-come, first-served.
               </p>
 
               <div className="mt-7 grid grid-cols-4 gap-3 max-w-md">
                 {[{ l: "Days", v: d }, { l: "Hours", v: h }, { l: "Min", v: m }, { l: "Sec", v: s }].map((t) => (
-                  <div key={t.l} className="rounded-xl border border-border bg-card/60 backdrop-blur p-3 text-center" style={{ boxShadow: "var(--shadow-elegant)" }}>
-                    <div className="text-2xl sm:text-3xl font-bold tabular-nums text-primary">{String(t.v).padStart(2, "0")}</div>
+                  <div key={t.l} className="rounded-xl border border-border bg-card p-3 text-center" style={{ boxShadow: "var(--shadow-elegant)" }}>
+                    <div className="text-2xl sm:text-3xl font-bold tabular-nums text-[var(--urgency)]">{String(t.v).padStart(2, "0")}</div>
                     <div className="text-[10px] uppercase tracking-widest text-muted-foreground">{t.l}</div>
                   </div>
                 ))}
