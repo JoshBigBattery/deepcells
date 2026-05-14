@@ -435,7 +435,7 @@ function TrustCard() {
             </div>
             <div>
               <div className="text-xs uppercase tracking-wider text-muted-foreground">{S.label}</div>
-              <div className="text-xl font-bold">{S.value}</div>
+              <div className="text-xl font-bold text-[var(--promo)]">{S.value}</div>
               <div className="text-sm text-muted-foreground">{S.sub}</div>
             </div>
           </div>
