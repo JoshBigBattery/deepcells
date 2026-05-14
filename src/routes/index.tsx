@@ -318,7 +318,7 @@ function Index() {
 
             <div className="mt-6 flex items-center justify-between rounded-lg border border-border bg-muted/30 p-3 text-sm">
               <span className="text-muted-foreground">Order subtotal</span>
-              <span className="font-semibold tabular-nums">{fmt(subtotal)}</span>
+              <span className="font-bold tabular-nums text-[var(--promo)]">{fmt(subtotal)}</span>
             </div>
 
             <Button type="submit" size="lg" className="mt-5 w-full bg-gradient-to-r from-primary to-accent text-primary-foreground hover:opacity-90" style={{ boxShadow: "var(--shadow-glow)" }}>
