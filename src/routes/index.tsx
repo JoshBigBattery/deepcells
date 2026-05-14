@@ -8,7 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 import { Toaster } from "@/components/ui/sonner";
 
-import logo from "@/assets/deepcells-logo.png";
+import logo from "@/assets/deepcells-logo.svg";
 import walrusG3 from "@/assets/products/walrus-g3.webp";
 import walrusG3Pro from "@/assets/products/walrus-g3-pro.webp";
 import walrusG4Plus from "@/assets/products/walrus-g4-plus.webp";
