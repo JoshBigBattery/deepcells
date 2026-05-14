@@ -220,7 +220,7 @@ function Index() {
                 <f.i className={`h-5 w-5 ${f.color}`} />
                 <div>
                   <div className="text-xs uppercase tracking-wider text-muted-foreground">{f.l}</div>
-                  <div className={`text-sm font-semibold ${f.l === "Sale ends" ? "text-[var(--urgency)]" : ""}`}>{f.v}</div>
+                  <div className={`text-sm font-semibold ${f.l === "Sale ends" ? "text-[var(--urgency)]" : "text-[var(--promo)]"}`}>{f.v}</div>
                 </div>
               </div>
             ))}
