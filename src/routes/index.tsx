@@ -211,16 +211,16 @@ function Index() {
           {/* Quick facts */}
           <div className="mt-12 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
             {[
-              { i: Package, l: "Min. order", v: "$5,000" },
-              { i: Calendar, l: "Sale ends", v: "In 2 weeks" },
-              { i: MapPin, l: "Pickup", v: "Chatsworth, CA" },
-              { i: ShieldCheck, l: "Fulfilled by", v: "TechDirect" },
+              { i: Package, l: "Min. order", v: "$5,000", color: "text-primary" },
+              { i: Calendar, l: "Sale ends", v: "In 2 weeks", color: "text-[var(--urgency)]" },
+              { i: MapPin, l: "Pickup", v: "Chatsworth, CA", color: "text-primary" },
+              { i: ShieldCheck, l: "Fulfilled by", v: "TechDirect", color: "text-primary" },
             ].map((f) => (
-              <div key={f.l} className="flex items-center gap-3 rounded-xl border border-border bg-card/60 p-4 backdrop-blur">
-                <f.i className="h-5 w-5 text-primary" />
+              <div key={f.l} className="flex items-center gap-3 rounded-xl border border-border bg-card p-4">
+                <f.i className={`h-5 w-5 ${f.color}`} />
                 <div>
                   <div className="text-xs uppercase tracking-wider text-muted-foreground">{f.l}</div>
-                  <div className="text-sm font-semibold">{f.v}</div>
+                  <div className={`text-sm font-semibold ${f.l === "Sale ends" ? "text-[var(--urgency)]" : ""}`}>{f.v}</div>
                 </div>
               </div>
             ))}
