@@ -175,8 +175,8 @@ function Index() {
 
           <div className="mt-10 grid items-center gap-10 lg:grid-cols-[1.2fr_1fr]">
             <div>
-              <div className="inline-flex items-center gap-2 rounded-full border border-[var(--urgency)]/40 bg-[var(--urgency)]/10 px-3 py-1 text-xs font-semibold text-[var(--urgency)]">
-                <span className="relative flex h-2 w-2"><span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[var(--urgency)] opacity-75" /><span className="relative inline-flex h-2 w-2 rounded-full bg-[var(--urgency)]" /></span>
+              <div className="inline-flex items-center gap-2 rounded-full border border-green-600/40 bg-green-600/10 px-3 py-1 text-xs font-semibold text-green-600">
+                <span className="relative flex h-2 w-2"><span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-green-600 opacity-75" /><span className="relative inline-flex h-2 w-2 rounded-full bg-green-600" /></span>
                 LIVE LIQUIDATION EVENT · ENDS IN 2 WEEKS
               </div>
               <h1 className="mt-5 text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight">
@@ -220,7 +220,7 @@ function Index() {
                 <f.i className={`h-5 w-5 ${f.color}`} />
                 <div>
                   <div className="text-xs uppercase tracking-wider text-muted-foreground">{f.l}</div>
-                  <div className={`text-sm font-semibold ${f.l === "Sale ends" ? "text-[var(--urgency)]" : ""}`}>{f.v}</div>
+                  <div className={`text-sm font-semibold ${f.l === "Sale ends" ? "text-[var(--urgency)]" : "text-[var(--promo)]"}`}>{f.v}</div>
                 </div>
               </div>
             ))}
@@ -318,7 +318,7 @@ function Index() {
 
             <div className="mt-6 flex items-center justify-between rounded-lg border border-border bg-muted/30 p-3 text-sm">
               <span className="text-muted-foreground">Order subtotal</span>
-              <span className="font-semibold tabular-nums">{fmt(subtotal)}</span>
+              <span className="font-bold tabular-nums text-[var(--promo)]">{fmt(subtotal)}</span>
             </div>
 
             <Button type="submit" size="lg" className="mt-5 w-full bg-gradient-to-r from-primary to-accent text-primary-foreground hover:opacity-90" style={{ boxShadow: "var(--shadow-glow)" }}>
@@ -435,7 +435,7 @@ function TrustCard() {
             </div>
             <div>
               <div className="text-xs uppercase tracking-wider text-muted-foreground">{S.label}</div>
-              <div className="text-xl font-bold">{S.value}</div>
+              <div className="text-xl font-bold text-[var(--promo)]">{S.value}</div>
               <div className="text-sm text-muted-foreground">{S.sub}</div>
             </div>
           </div>
