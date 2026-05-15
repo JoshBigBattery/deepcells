@@ -1,5 +1,5 @@
 {
-	"dbConnectionString": "postgres://localhost:60218/postgres",
+	"dbConnectionString": "postgres://localhost:55736/postgres",
 	"geolocation": {
 		"data": {
 			"city": "Commerce",
@@ -16,6 +16,6 @@
 			"longitude": -95.911,
 			"postalCode": "75428"
 		},
-		"timestamp": 1778789911132
+		"timestamp": 1778881475497
 	}
 }

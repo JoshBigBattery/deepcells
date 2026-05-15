@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { Minus, Plus, MapPin, Calendar as CalendarIcon, Package, ShieldCheck, Star, Zap, Truck, Users, BadgeCheck, ExternalLink, Trash2, House, Caravan, Forklift } from "lucide-react";
+import { Minus, Plus, MapPin, Calendar as CalendarIcon, ShieldCheck, Star, BadgeCheck, ExternalLink, Trash2, House, Caravan, Forklift } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -11,10 +11,16 @@ import { toast } from "sonner";
 import { Toaster } from "@/components/ui/sonner";
 
 import logo from "@/assets/deepcells-logo.svg";
+import batteryEvoLogo from "@/assets/BatteryEVO-High-Resolution.webp";
+import ebayLogo from "@/assets/EBay_logo.svg";
+import techDirectLogo from "@/assets/TechDirect Logo.webp";
 import walrusG3 from "@/assets/products/walrus-g3.webp";
 import walrusG3Pro from "@/assets/products/walrus-g3-pro.webp";
 import walrusG4Plus from "@/assets/products/walrus-g4-plus.webp";
 import walrusPacific from "@/assets/products/walrus-pacific.webp";
+import walrusPacificPro from "@/assets/products/Walrus-Pacific-Pro-BEVO-1536x1024.webp";
+import mustang from "@/assets/products/48V-MUSTANG-With-A-Line-1024x682.webp";
+import rhino from "@/assets/products/Rhino4.webp";
 import owlLite from "@/assets/products/12V-OWL-LITE.webp";
 import razorback from "@/assets/products/12V-RAZORBACK.webp";
 import eagle from "@/assets/products/24V-EAGLE.webp";
@@ -23,14 +29,13 @@ import reindeer from "@/assets/products/36V-REINDEER.webp";
 import badger from "@/assets/products/48V-BADGER.webp";
 import chihuahua from "@/assets/products/48V-Chihuahua.webp";
 import falcon from "@/assets/products/72V-FALCON.png";
-import elephant from "@/assets/products/ELEPHANT-480V-AC227.webp";
 
 export const Route = createFileRoute("/")({
   component: Index,
   head: () => ({
     meta: [
       { title: "DeepCells × TechDirect Liquidation — Lithium Battery Sale" },
-      { name: "description", content: "30-40% OFF select lithium battery inventory. Home backup, golf cart, RV & industrial. Hosted by DeepCells, processed with TechDirect. Ends in 2 weeks." },
+      { name: "description", content: "30-50+% OFF select lithium battery inventory. Home backup, golf cart, RV & industrial. Hosted by DeepCells, processed with TechDirect. Ends in 2 weeks." },
     ],
   }),
 });
@@ -80,41 +85,43 @@ const CATEGORIES: Category[] = [
     name: "Home Backup Systems",
     icon: House,
     products: [
-      { id: "walrus-g3", name: "Walrus G3", spec: "12.5 kVA Inverter · 22 kWh LFP", blurb: "Perfect for small to medium homes with central A/C under 3 tons.", image: walrusG3, retail: 14900, sale: 9685, off: 35 },
-      { id: "walrus-g4-plus", name: "Walrus G4 PLUS", spec: "16.5 kVA Inverter · 23 kWh LFP", blurb: "Larger inverter for homes with high-draw appliances and electric water heaters.", image: walrusG4Plus, retail: 17900, sale: 11635, off: 35 },
-      { id: "walrus-g3-pro", name: "Walrus G3 PRO", spec: "22.0 kVA Inverter · 44 kWh LFP", blurb: "Strongest inverter we carry plus immense storage in a compact package.", image: walrusG3Pro, retail: 26900, sale: 16140, off: 40 },
-      { id: "walrus-pacific", name: "Walrus Pacific", spec: "12.5 kVA Inverter · 62 kWh LFP", blurb: "Massive LFP pack for long outages or high daily consumption.", image: walrusPacific, retail: 32900, sale: 21385, off: 35 },
+      { id: "walrus-g3", name: "Walrus G3", spec: "12.5 kVA Inverter · 22 kWh LFP", blurb: "Perfect for small to medium homes with central A/C under 3 tons.", image: walrusG3, retail: 4849, sale: 3799, off: 22 },
+      { id: "walrus-g4-plus", name: "Walrus G4 PLUS", spec: "16.5 kVA Inverter · 23 kWh LFP", blurb: "Larger inverter for homes with high-draw appliances and electric water heaters.", image: walrusG4Plus, retail: 5199, sale: 4199, off: 19 },
+      { id: "walrus-g3-pro", name: "Walrus G3 PRO", spec: "22.0 kVA Inverter · 44 kWh LFP", blurb: "Strongest inverter we carry plus immense storage in a compact package.", image: walrusG3Pro, retail: 9195, sale: 8195, off: 11 },
+      { id: "walrus-pacific", name: "Walrus Pacific", spec: "12.5 kVA Inverter · 62 kWh LFP", blurb: "Massive LFP pack for long outages or high daily consumption.", image: walrusPacific, retail: 10985, sale: 7690, off: 30 },
+      { id: "walrus-pacific-pro", name: "Walrus Pacific Pro", spec: "22 kVA Inverter · 100 kWh LFP · 72V / AC110-220V", blurb: "Flagship system with 100 kWh storage and split-phase AC output for the largest residential demands.", image: walrusPacificPro, retail: 17599, sale: 12319, off: 30 },
     ],
   },
   {
     name: "Golf Cart Batteries",
     icon: GolfCartIcon,
     products: [
-      { id: "eagle-24v", name: "24V Eagle", spec: "24V Lithium · Drop-in", blurb: "Light, compact lithium pack for 24V carts and utility vehicles.", image: eagle, retail: 1899, sale: 1234, off: 35 },
-      { id: "reindeer-36v", name: "36V Reindeer", spec: "36V Lithium · Long-range", blurb: "All-day range upgrade for classic 36V golf carts.", image: reindeer, retail: 2499, sale: 1624, off: 35 },
-      { id: "raptor-36v", name: "36V Raptor", spec: "36V Lithium · High output", blurb: "High-output 36V pack for hilly courses and modded carts.", image: raptor, retail: 2799, sale: 1819, off: 35 },
-      { id: "badger-48v", name: "48V Badger", spec: "48V Lithium · Standard", blurb: "Reliable 48V drop-in upgrade with BMS protection.", image: badger, retail: 2999, sale: 1949, off: 35 },
-      { id: "chihuahua-48v", name: "48V Chihuahua", spec: "48V Lithium · Compact", blurb: "Compact 48V pack for tight battery bays.", image: chihuahua, retail: 2699, sale: 1754, off: 35 },
-      { id: "falcon-72v", name: "72V Falcon", spec: "72V Lithium · Performance", blurb: "Performance 72V system for lifted and high-speed carts.", image: falcon, retail: 4499, sale: 2699, off: 40 },
+      { id: "eagle-24v", name: "24V Eagle", spec: "24V Lithium · Drop-in", blurb: "Light, compact lithium pack for 24V carts and utility vehicles.", image: eagle, retail: 500, sale: 375, off: 25 },
+      { id: "reindeer-36v", name: "36V Reindeer", spec: "36V Lithium · Long-range", blurb: "All-day range upgrade for classic 36V golf carts.", image: reindeer, retail: 1699, sale: 1189, off: 30 },
+      { id: "raptor-36v", name: "36V Raptor", spec: "36V Lithium · High output", blurb: "High-output 36V pack for hilly courses and modded carts.", image: raptor, retail: 700, sale: 490, off: 30 },
+      { id: "badger-48v", name: "48V Badger", spec: "48V Lithium · Standard", blurb: "Reliable 48V drop-in upgrade with BMS protection.", image: badger, retail: 749, sale: 524, off: 30 },
+      { id: "chihuahua-48v", name: "48V Chihuahua", spec: "48V Lithium · Compact", blurb: "Compact 48V pack for tight battery bays.", image: chihuahua, retail: 644, sale: 451, off: 30 },
+      { id: "mustang-48v", name: "48V Mustang", spec: "48V Lithium", blurb: "Lithium battery upgrade for 48V golf carts and utility applications.", image: mustang, retail: 1299, sale: 909, off: 30 },
+      { id: "rhino-48v", name: "48V Rhino", spec: "48V Lithium · High-output", blurb: "High-output 48V lithium pack for demanding cart and utility applications.", image: rhino, retail: 7145, sale: 5002, off: 30 },
+      { id: "falcon-72v", name: "72V Falcon", spec: "72V Lithium · Performance", blurb: "Performance 72V system for lifted and high-speed carts.", image: falcon, retail: 814, sale: 595, off: 27 },
     ],
   },
   {
     name: "RV Batteries",
     icon: Caravan,
     products: [
-      { id: "owl-lite-12v", name: "12V Owl Lite", spec: "12V LiFePO4 · 100Ah class", blurb: "Lightweight 12V house battery for RVs, vans, and trailers.", image: owlLite, retail: 899, sale: 584, off: 35 },
-      { id: "razorback-12v", name: "12V Razorback", spec: "12V LiFePO4 · High capacity", blurb: "High-capacity 12V LFP for off-grid coaches and overlanders.", image: razorback, retail: 1299, sale: 844, off: 35 },
-      { id: "eagle-24v-rv", name: "24V Eagle (RV)", spec: "24V LiFePO4 · House bank", blurb: "24V house bank for larger RVs and marine builds.", image: eagle, retail: 1899, sale: 1234, off: 35 },
+      { id: "owl-lite-12v", name: "12V Owl Lite", spec: "12V LiFePO4 · 100Ah class", blurb: "Lightweight 12V house battery for RVs, vans, and trailers.", image: owlLite, retail: 328, sale: 229, off: 30 },
+      { id: "razorback-12v", name: "12V Razorback", spec: "12V LiFePO4 · High capacity", blurb: "High-capacity 12V LFP for off-grid coaches and overlanders.", image: razorback, retail: 950, sale: 750, off: 21 },
+      { id: "eagle-24v-rv", name: "24V Eagle (RV)", spec: "24V LiFePO4 · House bank", blurb: "24V house bank for larger RVs and marine builds.", image: eagle, retail: 500, sale: 375, off: 25 },
     ],
   },
   {
     name: "Industrial Batteries",
     icon: Forklift,
     products: [
-      { id: "owl-lite-ind", name: "12V Owl Lite (Industrial)", spec: "12V LFP · Telecom & light duty", blurb: "Telecom and light industrial 12V LFP.", image: owlLite, retail: 999, sale: 649, off: 35 },
-      { id: "reindeer-36v-ind", name: "36V Reindeer (Industrial)", spec: "36V LFP · Material handling", blurb: "Material handling and floor scrubber lithium pack.", image: reindeer, retail: 3499, sale: 2274, off: 35 },
-      { id: "chihuahua-48v-ind", name: "48V Chihuahua (Industrial)", spec: "48V LFP · Light forklift", blurb: "Compact 48V industrial pack for light forklifts and AGVs.", image: chihuahua, retail: 3299, sale: 2144, off: 35 },
-      { id: "elephant-480v", name: "480V Elephant AC227", spec: "480V LFP · Commercial ESS", blurb: "Commercial-scale energy storage system for industrial sites.", image: elephant, retail: 89000, sale: 53400, off: 40 },
+      { id: "owl-lite-ind", name: "12V Owl Lite (Industrial)", spec: "12V LFP · Telecom & light duty", blurb: "Telecom and light industrial 12V LFP.", image: owlLite, retail: 328, sale: 229, off: 30 },
+      { id: "reindeer-36v-ind", name: "36V Reindeer (Industrial)", spec: "36V LFP · Material handling", blurb: "Material handling and floor scrubber lithium pack.", image: reindeer, retail: 1699, sale: 1189, off: 30 },
+      { id: "chihuahua-48v-ind", name: "48V Chihuahua (Industrial)", spec: "48V LFP · Light forklift", blurb: "Compact 48V industrial pack for light forklifts and AGVs.", image: chihuahua, retail: 644, sale: 451, off: 30 },
     ],
   },
 ];
@@ -123,6 +130,16 @@ const ALL_PRODUCTS = CATEGORIES.flatMap((c) => c.products);
 // Sale ends at midnight Pacific (PDT) at the end of May 28, 2026
 // — i.e. 00:00 Pacific on May 29 = 07:00 UTC.
 const SALE_END = new Date("2026-05-29T07:00:00Z");
+
+// Weekly discount lever. Bump to 0.35, 0.40, 0.45, 0.50 in coming weeks.
+const DISCOUNT = 0.30;
+function salePrice(retail: number) {
+  return Math.round(retail * (1 - DISCOUNT));
+}
+
+function fmt(n: number) {
+  return n.toLocaleString("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 });
+}
 
 function useCountdown(target: Date) {
   const [now, setNow] = useState(() => Date.now());
@@ -146,10 +163,12 @@ function Index() {
   const { d, h, m, s } = useCountdown(SALE_END);
 
   const lineItems = ALL_PRODUCTS
-    .map((p) => ({ ...p, q: qty[p.id] || 0 }))
+    .map((p) => ({ ...p, q: qty[p.id] || 0, sale: salePrice(p.retail) }))
     .filter((p) => p.q > 0);
+  const subtotal = lineItems.reduce((acc, p) => acc + p.sale * p.q, 0);
+  const retailTotal = lineItems.reduce((acc, p) => acc + p.retail * p.q, 0);
 
-  const setQ = (id: string, v: number) => setQty((q) => ({ ...q, [id]: Math.max(0, v) }));
+  const setQ = (id: string, v: number) => setQty((q) => ({ ...q, [id]: Math.min(999, Math.max(0, v)) }));
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -157,10 +176,12 @@ function Index() {
     if (lineItems.length === 0) return toast.error("Select at least one product you're interested in.");
 
     const itemsText = lineItems
-      .map((p) => `  ${p.q} × ${p.name} (${p.spec})`)
+      .map((p) => `  ${p.q} × ${p.name} (${p.spec}) — ${fmt(p.sale)} ea (retail ${fmt(p.retail)}) = ${fmt(p.sale * p.q)}`)
       .join("\n");
 
     const payload = {
+      _subject: `DeepCells × BatteryEVO Quote Request — ${form.name}${form.company ? ` (${form.company})` : ""}`,
+      _replyto: form.email,
       _cc: "joshua.b@bigbattery.com",
       name: form.name,
       company: form.company,
@@ -170,6 +191,8 @@ function Index() {
       pickup: pickup ? formatPickup(pickup) : "(not specified)",
       notes: form.notes,
       items: itemsText,
+      retailTotal: fmt(retailTotal),
+      subtotal: fmt(subtotal),
     };
 
     setSubmitting(true);
@@ -200,65 +223,56 @@ function Index() {
       <header className="relative overflow-hidden" style={{ background: "var(--gradient-hero)" }}>
         <div className="absolute inset-0 opacity-60 [background-image:linear-gradient(to_right,oklch(0.88_0.015_250)_1px,transparent_1px),linear-gradient(to_bottom,oklch(0.88_0.015_250)_1px,transparent_1px)] [background-size:48px_48px] [mask-image:radial-gradient(ellipse_at_center,black_40%,transparent_85%)]" />
         <div className="relative mx-auto max-w-6xl px-6 py-10 sm:py-14">
-          <nav className="flex items-center justify-between">
-            <img src={logo} alt="DeepCells" className="h-20 sm:h-24 lg:h-28 w-auto" />
-            <a href="#order" className="hidden sm:inline-flex items-center gap-2 rounded-full border border-border bg-card/80 px-4 py-2 text-sm text-foreground/80 backdrop-blur hover:bg-card transition">
-              Jump to order <Zap className="h-4 w-4 text-primary" />
-            </a>
-          </nav>
-
-          <div className="mt-10 grid items-center gap-10 lg:grid-cols-[1.2fr_1fr]">
+          <div className="flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-6 pb-6 sm:pb-8 border-b border-border/60">
+            <img src={logo} alt="DeepCells" className="h-20 sm:h-24 lg:h-28 w-auto shrink-0" />
             <div>
-              <div className="inline-flex items-center gap-2 rounded-full border border-green-600/40 bg-green-600/10 px-3 py-1 text-xs font-semibold text-green-600">
-                <span className="relative flex h-2 w-2"><span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-green-600 opacity-75" /><span className="relative inline-flex h-2 w-2 rounded-full bg-green-600" /></span>
-                LIVE LIQUIDATION EVENT · ENDS IN 2 WEEKS
-              </div>
-              <h1 className="mt-5 text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-[#0077ff]">
-                Deepcells | BatteryEVO Liquidation Sale
+              <h1 className="inline-flex items-center gap-2 text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight text-foreground">
+                <BadgeCheck className="h-6 w-6 sm:h-7 sm:w-7 lg:h-8 lg:w-8 text-primary" />
+                Established in 2017
+              </h1>
+              <h3 className="mt-1 text-base sm:text-lg font-medium text-muted-foreground">
+                Celebrating 9 years of trusted LiFePO4 battery solutions for homes, electric vehicles, industrial equipment
+              </h3>
+            </div>
+          </div>
+
+          <div className="mt-8 sm:mt-10 grid items-center gap-10 lg:grid-cols-[1.2fr_1fr]">
+            <div>
+              <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight bg-gradient-to-r from-[#0077ff] via-[#00b3ff] to-[var(--promo)] bg-clip-text text-transparent">
+                Sponsored by Deepcells,<br />Techdirect Liquidation of{" "}
+                <img
+                  src={batteryEvoLogo}
+                  alt="BatteryEVO"
+                  className="inline-block h-[0.9em] w-auto align-middle -translate-y-[0.05em]"
+                />{" "}
+                Inventory
               </h1>
               <p className="mt-5 max-w-2xl text-lg text-muted-foreground">
-                Deepcells is hosting an exclusive liquidation sale of BatteryEVO inventory at 30-40% OFF. Partnered and processed with TechDirect you can select home backup, golf cart, RV, and industrial lithium batteries. First-come, first-served.
+                Deepcells is hosting an exclusive liquidation sale of BatteryEVO inventory at <span className="font-bold text-[var(--promo)]">30-50+% OFF</span>. Partnered and processed with TechDirect you can select home backup, golf cart, RV, and industrial lithium batteries. First-come, first-served.
               </p>
 
-              <div className="mt-7 grid grid-cols-4 gap-3 max-w-md">
+              <div className="mt-7 inline-flex items-center gap-2 rounded-full border border-[var(--urgency)]/40 bg-[var(--urgency)]/10 px-3 py-1 text-xs font-semibold text-[var(--urgency)]">
+                <span className="relative flex h-2 w-2">
+                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[var(--urgency)] opacity-75" />
+                  <span className="relative inline-flex h-2 w-2 rounded-full bg-[var(--urgency)]" />
+                </span>
+                LIVE LIQUIDATION EVENT · ENDS IN 2 WEEKS
+              </div>
+
+              <div className="mt-3 grid grid-cols-4 gap-3 max-w-md">
                 {[{ l: "Days", v: d }, { l: "Hours", v: h }, { l: "Min", v: m }, { l: "Sec", v: s }].map((t) => (
-                  <div key={t.l} className="rounded-xl border border-border bg-card p-3 text-center" style={{ boxShadow: "var(--shadow-elegant)" }}>
+                  <div key={t.l} className="rounded-xl border border-[var(--urgency)]/30 bg-[var(--urgency)]/5 p-3 text-center" style={{ boxShadow: "var(--shadow-elegant)" }}>
                     <div className="text-2xl sm:text-3xl font-bold tabular-nums text-[var(--urgency)]">{String(t.v).padStart(2, "0")}</div>
                     <div className="text-[10px] uppercase tracking-widest text-muted-foreground">{t.l}</div>
                   </div>
                 ))}
               </div>
 
-              <div className="mt-7 flex flex-wrap gap-3">
-                <Button asChild size="lg" className="bg-gradient-to-r from-primary to-accent text-primary-foreground hover:opacity-90" style={{ boxShadow: "var(--shadow-glow)" }}>
-                  <a href="#catalog">Browse inventory</a>
-                </Button>
-                <Button asChild variant="outline" size="lg">
-                  <a href="#order">Contact Us</a>
-                </Button>
-              </div>
             </div>
 
             <TrustCard />
           </div>
 
-          {/* Quick facts */}
-          <div className="mt-12 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-            {[
-              { i: BadgeCheck, l: "All LiFePO4 Batteries", v: "30-40% OFF", color: "text-primary" },
-              { i: CalendarIcon, l: "Sale ends", v: "In 2 weeks", color: "text-[var(--urgency)]" },
-              { i: MapPin, l: "LOCAL PICKUP", v: "Chatsworth, CA", color: "text-primary" },
-              { i: ShieldCheck, l: "Processed by", v: "TechDirect", color: "text-primary" },
-            ].map((f) => (
-              <div key={f.l} className="flex items-center gap-3 rounded-xl border border-border bg-card p-4">
-                <f.i className={`h-5 w-5 ${f.color}`} />
-                <div>
-                  <div className="text-xs uppercase tracking-wider text-muted-foreground">{f.l}</div>
-                  <div className={`text-sm font-semibold ${f.l === "Sale ends" ? "text-[var(--urgency)]" : "text-[var(--promo)] text-black"}`}>{f.v}</div>
-                </div>
-              </div>
-            ))}
-          </div>
         </div>
       </header>
 
@@ -290,7 +304,7 @@ function Index() {
         {/* Order summary + form */}
         <section id="order" className="mt-20 grid gap-8 lg:grid-cols-[1fr_1.1fr]">
           <div className="rounded-2xl border border-border bg-card p-6 sm:p-8" style={{ boxShadow: "var(--shadow-elegant)" }}>
-            <h3 className="text-2xl font-bold">Items you're interested in</h3>
+            <h3 className="text-2xl font-bold">Order summary</h3>
             <p className="mt-1 text-sm text-muted-foreground">We'll follow up with a quote and availability.</p>
 
             <div className="mt-6 divide-y divide-border">
@@ -304,9 +318,12 @@ function Index() {
                   <img src={p.image} alt="" className="h-12 w-12 rounded-md object-cover bg-muted" />
                   <div className="min-w-0 flex-1">
                     <div className="truncate text-sm font-medium">{p.name}</div>
-                    <div className="text-xs text-muted-foreground">{p.spec}</div>
+                    <div className="text-xs text-muted-foreground tabular-nums">
+                      {p.q} × <span className="line-through opacity-70">{fmt(p.retail)}</span>{" "}
+                      <span className="font-semibold text-[var(--promo)]">{fmt(p.sale)}</span>
+                    </div>
                   </div>
-                  <div className="text-sm font-semibold tabular-nums">Qty {p.q}</div>
+                  <div className="text-sm font-semibold tabular-nums">{fmt(p.sale * p.q)}</div>
                   <button
                     type="button"
                     onClick={() => setQ(p.id, 0)}
@@ -318,6 +335,20 @@ function Index() {
                 </div>
               ))}
             </div>
+
+            {lineItems.length > 0 && (
+              <div className="mt-5 space-y-2 rounded-xl bg-muted/40 p-4 text-sm">
+                <div className="flex items-center justify-between text-muted-foreground">
+                  <span>Retail total</span>
+                  <span className="line-through tabular-nums">{fmt(retailTotal)}</span>
+                </div>
+                <div className="my-2 h-px bg-border" />
+                <div className="flex items-center justify-between text-base font-bold">
+                  <span>Subtotal</span>
+                  <span className="tabular-nums text-[var(--promo)]">{fmt(subtotal)}</span>
+                </div>
+              </div>
+            )}
           </div>
 
           <form onSubmit={onSubmit} className="rounded-2xl border border-border bg-card p-6 sm:p-8" style={{ boxShadow: "var(--shadow-elegant)" }}>
@@ -480,19 +511,13 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
 }
 
 function ProductCard({ product, qty, setQ }: { product: Product; qty: number; setQ: (v: number) => void }) {
-  const checked = qty > 0;
-  const toggle = () => setQ(checked ? 0 : 1);
+  const sale = salePrice(product.retail);
+  const selected = qty > 0;
   return (
-    <label
-      className="group flex items-center gap-3 rounded-xl border border-border bg-card p-2.5 sm:p-3 transition hover:border-primary/50 cursor-pointer"
-      style={{ boxShadow: checked ? "var(--shadow-glow)" : undefined }}
+    <div
+      className="group flex items-center gap-3 rounded-xl border border-border bg-card p-2.5 sm:p-3 transition hover:border-primary/50"
+      style={{ boxShadow: selected ? "var(--shadow-glow)" : undefined }}
     >
-      <input
-        type="checkbox"
-        checked={checked}
-        onChange={toggle}
-        className="h-4 w-4 shrink-0 accent-primary cursor-pointer"
-      />
       <div className="h-12 w-12 sm:h-14 sm:w-14 shrink-0 overflow-hidden rounded-md bg-muted">
         <img src={product.image} alt={product.name} className="h-full w-full object-contain p-1" loading="lazy" />
       </div>
@@ -501,40 +526,38 @@ function ProductCard({ product, qty, setQ }: { product: Product; qty: number; se
           {product.name} <span className="text-muted-foreground font-normal">· {product.spec}</span>
         </div>
       </div>
-      {checked && (
-        <div className="flex items-center gap-1 rounded-full border border-border bg-background p-1 shrink-0" onClick={(e) => e.preventDefault()}>
-          <button type="button" aria-label="Decrease" onClick={() => setQ(qty - 1)} className="flex h-7 w-7 items-center justify-center rounded-full hover:bg-muted disabled:opacity-40" disabled={qty <= 1}><Minus className="h-3.5 w-3.5" /></button>
-          <input type="number" min={0} value={qty} onChange={(e) => setQ(parseInt(e.target.value || "0", 10))} className="w-8 bg-transparent text-center text-sm font-semibold outline-none" />
-          <button type="button" aria-label="Increase" onClick={() => setQ(qty + 1)} className="flex h-7 w-7 items-center justify-center rounded-full bg-primary text-primary-foreground hover:opacity-90"><Plus className="h-3.5 w-3.5" /></button>
-        </div>
-      )}
-    </label>
+      <div className="flex flex-col items-end shrink-0 tabular-nums leading-tight">
+        <span className="text-[11px] sm:text-xs text-muted-foreground line-through">{fmt(product.retail)}</span>
+        <span className="text-sm sm:text-base font-bold text-[var(--promo)]">{fmt(sale)}</span>
+      </div>
+      <div className="flex items-center gap-1 rounded-full border border-border bg-background p-1 shrink-0">
+        <button type="button" aria-label="Decrease" onClick={() => setQ(qty - 1)} className="flex h-7 w-7 items-center justify-center rounded-full hover:bg-muted disabled:opacity-40" disabled={qty <= 0}><Minus className="h-3.5 w-3.5" /></button>
+        <input
+          type="text"
+          inputMode="numeric"
+          pattern="[0-9]*"
+          maxLength={3}
+          value={qty}
+          onChange={(e) => {
+            const v = e.target.value.replace(/[^0-9]/g, "");
+            setQ(v === "" ? 0 : parseInt(v, 10));
+          }}
+          className="w-8 bg-transparent text-center text-sm font-semibold outline-none"
+        />
+        <button type="button" aria-label="Increase" onClick={() => setQ(qty + 1)} disabled={qty >= 999} className="flex h-7 w-7 items-center justify-center rounded-full bg-primary text-primary-foreground hover:opacity-90 disabled:opacity-40"><Plus className="h-3.5 w-3.5" /></button>
+      </div>
+    </div>
   );
 }
 
 function TrustCard() {
-  const slides = [
-    { icon: Star, label: "eBay Seller Rating", value: "99.3% positive", sub: "Thousands of verified buyer reviews" },
-    { icon: BadgeCheck, label: "eBay Top Rated Plus", value: "Trusted Seller", sub: "Fast shipping & top-tier service" },
-    { icon: Users, label: "Loyal Following", value: "10K+ buyers", sub: "Active community on eBay" },
-    { icon: ShieldCheck, label: "Authorized Inventory", value: "Direct from TechDirect", sub: "Authentic, warrantied lithium batteries" },
-  ];
-  const [i, setI] = useState(0);
-  useEffect(() => {
-    const t = setInterval(() => setI((x) => (x + 1) % slides.length), 3000);
-    return () => clearInterval(t);
-  }, [slides.length]);
-  const S = slides[i];
   return (
     <div className="relative rounded-2xl border border-border bg-card/70 p-6 backdrop-blur" style={{ boxShadow: "var(--shadow-elegant)" }}>
-      <div className="flex items-center justify-between">
-        <div className="text-xs uppercase tracking-widest text-muted-foreground">Inventory & payment partner</div>
-        <a href="https://www.ebay.com/str/techdirectclub" target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 text-xs text-primary hover:underline">
-          View on eBay <ExternalLink className="h-3 w-3" />
-        </a>
-      </div>
+      <div className="text-xs uppercase tracking-widest text-muted-foreground">About TechDirect</div>
       <div className="mt-3 flex items-center gap-3">
-        <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-accent text-primary-foreground font-black">TD</div>
+        <div className="flex h-20 w-20 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-white p-1.5">
+          <img src={techDirectLogo} alt="TechDirect" className="h-full w-full object-contain" />
+        </div>
         <div>
           <div className="text-lg font-bold">TechDirect</div>
           <div className="flex items-center gap-1 text-xs text-muted-foreground">
@@ -544,40 +567,45 @@ function TrustCard() {
         </div>
       </div>
 
-      <div className="mt-5 overflow-hidden rounded-xl border border-border bg-background/40">
-        <div key={i} className="animate-in fade-in slide-in-from-right-2 duration-500 p-5">
-          <div className="flex items-start gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/15 text-primary">
-              <S.icon className="h-5 w-5" />
-            </div>
-            <div>
-              <div className="text-xs uppercase tracking-wider text-muted-foreground">{S.label}</div>
-              <div className="text-xl font-bold text-[var(--promo)]">{S.value}</div>
-              <div className="text-sm text-muted-foreground">{S.sub}</div>
-            </div>
+      <a
+        href="https://www.ebay.com/str/techdirectclub"
+        target="_blank"
+        rel="noreferrer"
+        className="mt-5 inline-flex items-center gap-1.5 text-sm text-primary hover:underline"
+      >
+        View their trusted official{" "}
+        <img src={ebayLogo} alt="eBay" className="inline-block h-4 w-auto align-middle -translate-y-[1px]" />{" "}
+        store
+        <ExternalLink className="h-3.5 w-3.5" />
+      </a>
+
+      <ul className="mt-4 space-y-3">
+        <li className="flex items-start gap-3">
+          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-primary/15 text-primary">
+            <ShieldCheck className="h-4 w-4" />
           </div>
-        </div>
-        <div className="flex justify-center gap-1.5 pb-4">
-          {slides.map((_, k) => (
-            <button key={k} aria-label={`Slide ${k + 1}`} onClick={() => setI(k)} className={`h-1.5 rounded-full transition-all ${k === i ? "w-6 bg-primary" : "w-1.5 bg-border"}`} />
-          ))}
-        </div>
-      </div>
-
-      <div className="mt-4 grid grid-cols-3 gap-2 text-center">
-        <Stat v="99.3%" l="Positive" />
-        <Stat v="10K+" l="Buyers" />
-        <Stat v="Fast" l="Shipping" />
-      </div>
-    </div>
-  );
-}
-
-function Stat({ v, l }: { v: string; l: string }) {
-  return (
-    <div className="rounded-lg border border-border bg-background p-2">
-      <div className="text-sm font-bold text-[var(--promo)]">{v}</div>
-      <div className="text-[10px] uppercase tracking-wider text-muted-foreground">{l}</div>
+          <p className="text-sm leading-snug text-muted-foreground">
+            In business for over <strong className="font-semibold text-foreground">10+ years</strong> liquidating overstock inventory.
+          </p>
+        </li>
+        <li className="flex items-start gap-3">
+          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-primary/15 text-primary">
+            <Star className="h-4 w-4" />
+          </div>
+          <p className="text-sm leading-snug text-muted-foreground">
+            Trusted seller of overstock with <strong className="font-semibold text-foreground">99.3% positive feedback</strong> on their{" "}
+            <img src={ebayLogo} alt="eBay" className="inline-block h-4 w-auto align-middle -translate-y-[1px]" /> store.
+          </p>
+        </li>
+        <li className="flex items-start gap-3">
+          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-primary/15 text-primary">
+            <BadgeCheck className="h-4 w-4" />
+          </div>
+          <p className="text-sm leading-snug text-muted-foreground">
+            <strong className="font-semibold text-foreground">Top Rated Plus</strong> seller — eBay's official distinction for highest-quality sellers.
+          </p>
+        </li>
+      </ul>
     </div>
   );
 }
