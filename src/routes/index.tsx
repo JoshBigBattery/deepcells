@@ -90,6 +90,7 @@ const CATEGORIES: Category[] = [
       { id: "walrus-g3-pro", name: "Walrus G3 PRO", spec: "22.0 kVA Inverter · 44 kWh LFP", blurb: "Strongest inverter we carry plus immense storage in a compact package.", image: walrusG3Pro, retail: 9195, sale: 8195, off: 11 },
       { id: "walrus-pacific", name: "Walrus Pacific", spec: "12.5 kVA Inverter · 62 kWh LFP", blurb: "Massive LFP pack for long outages or high daily consumption.", image: walrusPacific, retail: 10985, sale: 7690, off: 30 },
       { id: "walrus-pacific-pro", name: "Walrus Pacific Pro", spec: "22 kVA Inverter · 100 kWh LFP · 72V / AC110-220V", blurb: "Flagship system with 100 kWh storage and split-phase AC output for the largest residential demands.", image: walrusPacificPro, retail: 17599, sale: 12319, off: 30 },
+      { id: "rhino-48v-home", name: "48V Rhino", spec: "48V LiFePO4 · Home energy storage", blurb: "Standalone 48V LFP battery for home backup and DIY energy storage builds.", image: rhino, retail: 7145, sale: 5002, off: 30 },
     ],
   },
   {
@@ -102,7 +103,6 @@ const CATEGORIES: Category[] = [
       { id: "badger-48v", name: "48V Badger", spec: "48V Lithium · Standard", blurb: "Reliable 48V drop-in upgrade with BMS protection.", image: badger, retail: 749, sale: 524, off: 30 },
       { id: "chihuahua-48v", name: "48V Chihuahua", spec: "48V Lithium · Compact", blurb: "Compact 48V pack for tight battery bays.", image: chihuahua, retail: 644, sale: 451, off: 30 },
       { id: "mustang-48v", name: "48V Mustang", spec: "48V Lithium", blurb: "Lithium battery upgrade for 48V golf carts and utility applications.", image: mustang, retail: 1299, sale: 909, off: 30 },
-      { id: "rhino-48v", name: "48V Rhino", spec: "48V Lithium · High-output", blurb: "High-output 48V lithium pack for demanding cart and utility applications.", image: rhino, retail: 7145, sale: 5002, off: 30 },
       { id: "falcon-72v", name: "72V Falcon", spec: "72V Lithium · Performance", blurb: "Performance 72V system for lifted and high-speed carts.", image: falcon, retail: 814, sale: 595, off: 27 },
     ],
   },
@@ -122,6 +122,7 @@ const CATEGORIES: Category[] = [
       { id: "owl-lite-ind", name: "12V Owl Lite (Industrial)", spec: "12V LFP · Telecom & light duty", blurb: "Telecom and light industrial 12V LFP.", image: owlLite, retail: 328, sale: 229, off: 30 },
       { id: "reindeer-36v-ind", name: "36V Reindeer (Industrial)", spec: "36V LFP · Material handling", blurb: "Material handling and floor scrubber lithium pack.", image: reindeer, retail: 1699, sale: 1189, off: 30 },
       { id: "chihuahua-48v-ind", name: "48V Chihuahua (Industrial)", spec: "48V LFP · Light forklift", blurb: "Compact 48V industrial pack for light forklifts and AGVs.", image: chihuahua, retail: 644, sale: 451, off: 30 },
+      { id: "rhino-48v-ind", name: "48V Rhino (Industrial)", spec: "48V LFP · Industrial-grade", blurb: "Rugged 48V LFP for industrial equipment, forklifts, and stationary applications.", image: rhino, retail: 7145, sale: 5002, off: 30 },
     ],
   },
 ];
