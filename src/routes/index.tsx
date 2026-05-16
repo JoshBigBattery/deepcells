@@ -132,6 +132,12 @@ const ALL_PRODUCTS = CATEGORIES.flatMap((c) => c.products);
 // — i.e. 00:00 Pacific on May 29 = 07:00 UTC.
 const SALE_END = new Date("2026-05-29T07:00:00Z");
 
+// Minimum order subtotal (sale prices). Shown as a note in the UI.
+// Enforcement is currently disabled — flip ENFORCE_MIN_ORDER to true to
+// re-enable the validation, warning text, and disabled-button state.
+const MIN_ORDER = 5000;
+const ENFORCE_MIN_ORDER = false;
+
 // Weekly discount lever. Bump to 0.35, 0.40, 0.45, 0.50 in coming weeks.
 const DISCOUNT = 0.30;
 function salePrice(retail: number) {
@@ -168,6 +174,7 @@ function Index() {
     .filter((p) => p.q > 0);
   const subtotal = lineItems.reduce((acc, p) => acc + p.sale * p.q, 0);
   const retailTotal = lineItems.reduce((acc, p) => acc + p.retail * p.q, 0);
+  const meetsMin = subtotal >= MIN_ORDER;
 
   const setQ = (id: string, v: number) => setQty((q) => ({ ...q, [id]: Math.min(999, Math.max(0, v)) }));
 
@@ -175,6 +182,7 @@ function Index() {
     e.preventDefault();
     if (!form.name || !form.email) return toast.error("Name and email are required.");
     if (lineItems.length === 0) return toast.error("Select at least one product you're interested in.");
+    if (ENFORCE_MIN_ORDER && !meetsMin) return toast.error(`Minimum order is ${fmt(MIN_ORDER)}. You're at ${fmt(subtotal)}.`);
 
     const itemsText = lineItems
       .map((p) => `  ${p.q} × ${p.name} (${p.spec}) — ${fmt(p.sale)} ea (retail ${fmt(p.retail)}) = ${fmt(p.sale * p.q)}`)
@@ -277,36 +285,72 @@ function Index() {
         </div>
       </header>
 
-      {/* Catalog */}
-      <main id="catalog" className="mx-auto max-w-6xl px-6 py-16">
-        <div>
-          <h2 className="text-3xl sm:text-4xl font-bold tracking-tight">Select Products</h2>
-          <p className="mt-2 text-muted-foreground">Set quantities below. Your order summary updates live.</p>
-        </div>
+      <form onSubmit={onSubmit}>
+        <main className="mx-auto max-w-6xl px-6 py-16">
+          {/* Step 1: Your information */}
+          <section className="rounded-2xl border border-border bg-card p-6 sm:p-8" style={{ boxShadow: "var(--shadow-elegant)" }}>
+            <div className="flex items-center gap-3">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground text-lg font-bold tabular-nums">1</div>
+              <h2 className="text-2xl sm:text-3xl font-bold tracking-tight">Your information</h2>
+            </div>
+            <p className="mt-2 text-sm text-muted-foreground">Tell us who you are. We'll reach out with pricing, availability, and pickup details within one business day.</p>
 
-        <div className="mt-10 space-y-14">
-          {CATEGORIES.map((cat) => (
-            <section key={cat.name}>
-              <div className="flex items-center gap-3">
-                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/15 text-primary">
-                  <cat.icon className="h-5 w-5" />
+            <div className="mt-6 grid gap-4 sm:grid-cols-2">
+              <Field label="Full name *"><Input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} required maxLength={120} /></Field>
+              <Field label="Company"><Input value={form.company} onChange={(e) => setForm({ ...form, company: e.target.value })} maxLength={120} /></Field>
+              <Field label="Email *"><Input type="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} required maxLength={200} /></Field>
+              <Field label="Phone"><Input type="tel" value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} maxLength={40} /></Field>
+              <Field label="Buyer type">
+                <select value={form.buyerType} onChange={(e) => setForm({ ...form, buyerType: e.target.value })} className="flex h-10 w-full rounded-md border border-input bg-background px-3 text-sm">
+                  <option value="">Select…</option>
+                  <option>Reseller</option><option>Installer</option><option>Contractor</option><option>End user / bulk buyer</option><option>Other</option>
+                </select>
+              </Field>
+              <Field label="Pickup Window (Optional)">
+                <PickupPicker value={pickup} onChange={setPickup} />
+                <p className="mt-1 text-xs text-muted-foreground">For local pickup only</p>
+              </Field>
+              <div className="sm:col-span-2"><Field label="Notes"><Textarea rows={3} value={form.notes} onChange={(e) => setForm({ ...form, notes: e.target.value })} maxLength={1000} placeholder="Anything we should know?" /></Field></div>
+            </div>
+          </section>
+
+          {/* Step 2: Select products */}
+          <section id="catalog" className="mt-16">
+            <div className="flex items-center gap-3">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground text-lg font-bold tabular-nums">2</div>
+              <h2 className="text-3xl sm:text-4xl font-bold tracking-tight">Select Products</h2>
+            </div>
+            <p className="mt-2 text-muted-foreground">Set quantities below. Your order summary updates live at the bottom.</p>
+            <div className="mt-3 inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-primary">
+              Minimum orders of $5,000
+            </div>
+
+            <div className="mt-10 space-y-14">
+              {CATEGORIES.map((cat) => (
+                <div key={cat.name}>
+                  <div className="flex items-center gap-3">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/15 text-primary">
+                      <cat.icon className="h-5 w-5" />
+                    </div>
+                    <h3 className="text-xl sm:text-2xl font-semibold">{cat.name}</h3>
+                  </div>
+                  <div className="mt-5 flex flex-col gap-2">
+                    {cat.products.map((p) => (
+                      <ProductCard key={p.id} product={p} qty={qty[p.id] || 0} setQ={(v) => setQ(p.id, v)} />
+                    ))}
+                  </div>
                 </div>
-                <h3 className="text-xl sm:text-2xl font-semibold">{cat.name}</h3>
-              </div>
-              <div className="mt-5 flex flex-col gap-2">
-                {cat.products.map((p) => (
-                  <ProductCard key={p.id} product={p} qty={qty[p.id] || 0} setQ={(v) => setQ(p.id, v)} />
-                ))}
-              </div>
-            </section>
-          ))}
-        </div>
+              ))}
+            </div>
+          </section>
 
-        {/* Order summary + form */}
-        <section id="order" className="mt-20 grid gap-8 lg:grid-cols-[1fr_1.1fr]">
-          <div className="rounded-2xl border border-border bg-card p-6 sm:p-8" style={{ boxShadow: "var(--shadow-elegant)" }}>
-            <h3 className="text-2xl font-bold">Order summary</h3>
-            <p className="mt-1 text-sm text-muted-foreground">We'll follow up with a quote and availability.</p>
+          {/* Step 3: Review & submit */}
+          <section id="order" className="mt-20 rounded-2xl border border-border bg-card p-6 sm:p-8" style={{ boxShadow: "var(--shadow-elegant)" }}>
+            <div className="flex items-center gap-3">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground text-lg font-bold tabular-nums">3</div>
+              <h2 className="text-2xl sm:text-3xl font-bold tracking-tight">Review & confirm</h2>
+            </div>
+            <p className="mt-2 text-sm text-muted-foreground">Confirm the items you're interested in. We'll follow up with a quote.</p>
 
             <div className="mt-6 divide-y divide-border">
               {lineItems.length === 0 && (
@@ -348,41 +392,23 @@ function Index() {
                   <span>Subtotal</span>
                   <span className="tabular-nums text-[var(--promo)]">{fmt(subtotal)}</span>
                 </div>
+                {ENFORCE_MIN_ORDER && !meetsMin && (
+                  <p className="pt-2 text-xs text-destructive">
+                    Add {fmt(MIN_ORDER - subtotal)} more to meet the {fmt(MIN_ORDER)} minimum order.
+                  </p>
+                )}
               </div>
             )}
-          </div>
 
-          <form onSubmit={onSubmit} className="rounded-2xl border border-border bg-card p-6 sm:p-8" style={{ boxShadow: "var(--shadow-elegant)" }}>
-            <h3 className="text-2xl font-bold">Request a quote</h3>
-            <p className="mt-1 text-sm text-muted-foreground">We'll reach out with pricing, availability, and pickup details within one business day.</p>
-
-            <div className="mt-6 grid gap-4 sm:grid-cols-2">
-              <Field label="Full name *"><Input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} required maxLength={120} /></Field>
-              <Field label="Company"><Input value={form.company} onChange={(e) => setForm({ ...form, company: e.target.value })} maxLength={120} /></Field>
-              <Field label="Email *"><Input type="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} required maxLength={200} /></Field>
-              <Field label="Phone"><Input type="tel" value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} maxLength={40} /></Field>
-              <Field label="Buyer type">
-                <select value={form.buyerType} onChange={(e) => setForm({ ...form, buyerType: e.target.value })} className="flex h-10 w-full rounded-md border border-input bg-background px-3 text-sm">
-                  <option value="">Select…</option>
-                  <option>Reseller</option><option>Installer</option><option>Contractor</option><option>End user / bulk buyer</option><option>Other</option>
-                </select>
-              </Field>
-              <Field label="Pickup Window (Optional)">
-                <PickupPicker value={pickup} onChange={setPickup} />
-                <p className="mt-1 text-xs text-muted-foreground">For local pickup only</p>
-              </Field>
-              <div className="sm:col-span-2"><Field label="Notes"><Textarea rows={3} value={form.notes} onChange={(e) => setForm({ ...form, notes: e.target.value })} maxLength={1000} placeholder="Anything we should know?" /></Field></div>
-            </div>
-
-            <Button type="submit" size="lg" disabled={submitting} className="mt-6 w-full bg-gradient-to-r from-primary to-accent text-primary-foreground hover:opacity-90" style={{ boxShadow: "var(--shadow-glow)" }}>
-              {submitting ? "Sending…" : "Request quote"}
+            <Button type="submit" size="lg" disabled={submitting || (ENFORCE_MIN_ORDER && !meetsMin)} className="mt-6 w-full bg-gradient-to-r from-primary to-accent text-primary-foreground hover:opacity-90" style={{ boxShadow: "var(--shadow-glow)" }}>
+              {submitting ? "Sending…" : ENFORCE_MIN_ORDER && !meetsMin && lineItems.length > 0 ? `Add ${fmt(MIN_ORDER - subtotal)} to submit` : "Confirm & submit"}
             </Button>
             <p className="mt-3 text-center text-xs text-muted-foreground">
               By submitting, you'll be contacted by DeepCells with a quote and availability. Pickup at {`9667 Owensmouth Ave, Chatsworth, CA 91311`}.
             </p>
-          </form>
-        </section>
-      </main>
+          </section>
+        </main>
+      </form>
 
       <footer className="border-t border-border bg-card/40">
         <div className="mx-auto max-w-6xl px-6 py-10 grid gap-6 sm:grid-cols-2 items-center">
