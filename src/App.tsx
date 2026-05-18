@@ -13,7 +13,7 @@ import logo from "@/assets/deepcells-logo.svg";
 import batteryEvoLogo from "@/assets/BatteryEVO-High-Resolution.webp";
 import ebayLogo from "@/assets/EBay_logo.svg";
 import techDirectLogo from "@/assets/TechDirect Logo.webp";
-import paypalBuyerProtection from "@/assets/Paypal Buyer Protection.webp";
+import paypalBuyerProtection from "@/assets/paypal-buyer-protection.webp";
 import walrusG3 from "@/assets/products/walrus-g3.webp";
 import walrusG3Pro from "@/assets/products/walrus-g3-pro.webp";
 import walrusG4Plus from "@/assets/products/walrus-g4-plus.webp";
