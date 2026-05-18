@@ -13,7 +13,8 @@ import logo from "@/assets/deepcells-logo.svg";
 import batteryEvoLogo from "@/assets/BatteryEVO-High-Resolution.webp";
 import ebayLogo from "@/assets/EBay_logo.svg";
 import techDirectLogo from "@/assets/TechDirect Logo.webp";
-import paypalBuyerProtection from "@/assets/paypal-buyer-protection.webp";
+import paypalLogo from "@/assets/PayPal_Logo.webp";
+import paypalSeal from "@/assets/paypalseal.webp";
 import walrusG3 from "@/assets/products/walrus-g3.webp";
 import walrusG3Pro from "@/assets/products/walrus-g3-pro.webp";
 import walrusG4Plus from "@/assets/products/walrus-g4-plus.webp";
@@ -408,18 +409,27 @@ export default function App() {
             )}
 
             {/* PayPal trust block */}
-            <div className="mt-6 rounded-xl border border-border bg-muted/30 p-4 sm:p-5">
-              <div className="flex items-start gap-4">
-                <img
-                  src={paypalBuyerProtection}
-                  alt="PayPal Buyer Protection"
-                  className="h-14 sm:h-16 w-auto shrink-0 object-contain"
-                />
-                <div className="min-w-0">
-                  <h4 className="text-sm sm:text-base font-bold text-foreground">Buy with added confidence</h4>
-                  <p className="mt-1 text-xs sm:text-sm leading-snug text-muted-foreground">
-                    Payments are securely processed through PayPal, and eligible purchases may qualify for PayPal Purchase Protection for covered issues such as item not received, not functioning as described, or otherwise significantly not as described, subject to PayPal's applicable terms and eligibility requirements.
-                  </p>
+            <div className="mt-6 rounded-xl border border-border bg-muted/30 p-4 sm:relative sm:p-5 sm:pr-36">
+              <div className="flex flex-col gap-4 sm:flex-row sm:items-start">
+                <div className="flex min-w-0 items-start gap-4">
+                  <img
+                    src={paypalLogo}
+                    alt="PayPal"
+                    className="h-20 w-auto shrink-0 object-contain sm:h-24"
+                  />
+                  <div className="min-w-0">
+                    <h4 className="text-sm sm:text-base font-bold text-foreground">Buy with added confidence</h4>
+                    <p className="mt-1 text-xs sm:text-sm leading-snug text-muted-foreground">
+                      Payments are securely processed through PayPal, and eligible purchases may qualify for PayPal Purchase Protection for covered issues such as item not received, not functioning as described, or otherwise significantly not as described, subject to PayPal's applicable terms and eligibility requirements.
+                    </p>
+                  </div>
+                </div>
+                <div className="self-end sm:absolute sm:right-5 sm:top-1/2 sm:-translate-y-1/2">
+                  <img
+                    src={paypalSeal}
+                    alt="PayPal Verified"
+                    className="h-28 w-28 shrink-0 object-contain sm:h-32 sm:w-32"
+                  />
                 </div>
               </div>
             </div>
@@ -676,16 +686,23 @@ function TrustCard() {
         </li>
       </ul>
 
-      <div className="mt-5 flex items-center gap-3 border-t border-border pt-4">
+      <div className="mt-5 flex items-center justify-between gap-3 border-t border-border pt-4">
+        <div className="flex min-w-0 items-center gap-3">
+          <img
+            src={paypalLogo}
+            alt="PayPal"
+            className="h-10 w-auto shrink-0 object-contain"
+          />
+          <p className="text-xs leading-snug text-muted-foreground">
+            <strong className="font-semibold text-foreground">Buy with added confidence.</strong>{" "}
+            Eligible payments are processed through PayPal and may qualify for PayPal Purchase Protection.
+          </p>
+        </div>
         <img
-          src={paypalBuyerProtection}
-          alt="PayPal Buyer Protection"
-          className="h-10 w-auto shrink-0 object-contain"
+          src={paypalSeal}
+          alt="PayPal Verified"
+          className="h-16 w-16 shrink-0 object-contain"
         />
-        <p className="text-xs leading-snug text-muted-foreground">
-          <strong className="font-semibold text-foreground">Buy with added confidence.</strong>{" "}
-          Eligible payments are processed through PayPal and may qualify for PayPal Purchase Protection.
-        </p>
       </div>
     </div>
   );
