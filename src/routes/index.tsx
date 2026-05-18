@@ -14,6 +14,7 @@ import logo from "@/assets/deepcells-logo.svg";
 import batteryEvoLogo from "@/assets/BatteryEVO-High-Resolution.webp";
 import ebayLogo from "@/assets/EBay_logo.svg";
 import techDirectLogo from "@/assets/TechDirect Logo.webp";
+import paypalBuyerProtection from "@/assets/Paypal Buyer Protection.webp";
 import walrusG3 from "@/assets/products/walrus-g3.webp";
 import walrusG3Pro from "@/assets/products/walrus-g3-pro.webp";
 import walrusG4Plus from "@/assets/products/walrus-g4-plus.webp";
@@ -140,6 +141,18 @@ const ENFORCE_MIN_ORDER = false;
 
 // Weekly discount lever. Bump to 0.35, 0.40, 0.45, 0.50 in coming weeks.
 const DISCOUNT = 0.30;
+
+const TERMS_OF_SALE = `BatteryEVO Liquidation Sale Terms
+
+BatteryEVO inventory is being sold by Tech Direct through a liquidation hosted by DeepCells.com. Products are sold as-is, with no manufacturer warranty, seller warranty, or ongoing support, except that Tech Direct guarantees the product will function upon delivery.
+
+Buyer must inspect and test the product immediately upon receipt for non-functioning product. Any non-functioning product claim must be submitted within 48 hours of delivery to batteryevo@deepcells.com. Claims after 48 hours will not be accepted.
+
+Payment is processed by Tech Direct through PayPal. Eligible PayPal transactions may qualify for PayPal Purchase Protection, subject entirely to PayPal's terms, conditions, limitations, and eligibility determinations. Tech Direct and DeepCells.com do not control or guarantee PayPal's coverage decisions.
+
+After the 48-hour inspection period, all sales are final and buyer assumes all responsibility for the product, including use, installation, resale, transfer, and downstream claims. Buyer agrees to indemnify and hold harmless Tech Direct, DeepCells.com, BatteryEVO, and their affiliates and owners from any claims, damages, losses, liabilities, or product liability issues arising after the inspection period. Replacement part purchase requests may sent to Tech Direct after the sale by emailing batteryevo@deepcells.com.
+
+Tech Direct is not affiliated with, owned by, or associated with BatteryEVO. This liquidation sale is limited to inventory purchased by Tech Direct. Any warranty, service, or other claims against BatteryEVO are not assumed by Tech Direct and will not be considered as part of this sale.`;
 function salePrice(retail: number) {
   return Math.round(retail * (1 - DISCOUNT));
 }
@@ -166,6 +179,7 @@ function Index() {
   const [qty, setQty] = useState<Record<string, number>>({});
   const [form, setForm] = useState({ name: "", company: "", email: "", phone: "", buyerType: "", notes: "" });
   const [pickup, setPickup] = useState<Date | null>(null);
+  const [agreedToTerms, setAgreedToTerms] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const { d, h, m, s } = useCountdown(SALE_END);
 
@@ -183,6 +197,7 @@ function Index() {
     if (!form.name || !form.email) return toast.error("Name and email are required.");
     if (lineItems.length === 0) return toast.error("Select at least one product you're interested in.");
     if (ENFORCE_MIN_ORDER && !meetsMin) return toast.error(`Minimum order is ${fmt(MIN_ORDER)}. You're at ${fmt(subtotal)}.`);
+    if (!agreedToTerms) return toast.error("Please agree to the Terms of Sale before submitting.");
 
     const itemsText = lineItems
       .map((p) => `  ${p.q} × ${p.name} (${p.spec}) — ${fmt(p.sale)} ea (retail ${fmt(p.retail)}) = ${fmt(p.sale * p.q)}`)
@@ -202,6 +217,8 @@ function Index() {
       items: itemsText,
       retailTotal: fmt(retailTotal),
       subtotal: fmt(subtotal),
+      termsAccepted: `Yes — agreed to Terms of Sale on ${new Date().toISOString()}`,
+      termsOfSale: TERMS_OF_SALE,
     };
 
     setSubmitting(true);
@@ -216,6 +233,7 @@ function Index() {
       setForm({ name: "", company: "", email: "", phone: "", buyerType: "", notes: "" });
       setPickup(null);
       setQty({});
+      setAgreedToTerms(false);
     } catch (err) {
       console.error(err);
       toast.error("Something went wrong sending your request. Please try again.");
@@ -400,7 +418,42 @@ function Index() {
               </div>
             )}
 
-            <Button type="submit" size="lg" disabled={submitting || (ENFORCE_MIN_ORDER && !meetsMin)} className="mt-6 w-full bg-gradient-to-r from-primary to-accent text-primary-foreground hover:opacity-90" style={{ boxShadow: "var(--shadow-glow)" }}>
+            {/* PayPal trust block */}
+            <div className="mt-6 rounded-xl border border-border bg-muted/30 p-4 sm:p-5">
+              <div className="flex items-start gap-4">
+                <img
+                  src={paypalBuyerProtection}
+                  alt="PayPal Buyer Protection"
+                  className="h-14 sm:h-16 w-auto shrink-0 object-contain"
+                />
+                <div className="min-w-0">
+                  <h4 className="text-sm sm:text-base font-bold text-foreground">Buy with added confidence</h4>
+                  <p className="mt-1 text-xs sm:text-sm leading-snug text-muted-foreground">
+                    Payments are securely processed through PayPal, and eligible purchases may qualify for PayPal Purchase Protection for covered issues such as item not received, not functioning as described, or otherwise significantly not as described, subject to PayPal's applicable terms and eligibility requirements.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div className="mt-6 rounded-xl border border-border bg-muted/30 p-4">
+              <div className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">BatteryEVO Liquidation Sale Terms</div>
+              <div className="mt-2 max-h-40 overflow-y-auto rounded-md border border-border bg-background p-3 text-xs leading-relaxed text-muted-foreground whitespace-pre-line">
+                {TERMS_OF_SALE.split("\n\n").slice(1).join("\n\n")}
+              </div>
+              <label className="mt-3 flex items-start gap-2 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={agreedToTerms}
+                  onChange={(e) => setAgreedToTerms(e.target.checked)}
+                  className="mt-0.5 h-4 w-4 shrink-0 accent-primary cursor-pointer"
+                />
+                <span className="text-sm text-foreground">
+                  I have read and agree to the <strong className="font-semibold">Terms of Sale</strong>.
+                </span>
+              </label>
+            </div>
+
+            <Button type="submit" size="lg" disabled={submitting || !agreedToTerms || (ENFORCE_MIN_ORDER && !meetsMin)} className="mt-4 w-full bg-gradient-to-r from-primary to-accent text-primary-foreground hover:opacity-90" style={{ boxShadow: "var(--shadow-glow)" }}>
               {submitting ? "Sending…" : ENFORCE_MIN_ORDER && !meetsMin && lineItems.length > 0 ? `Add ${fmt(MIN_ORDER - subtotal)} to submit` : "Confirm & submit"}
             </Button>
             <p className="mt-3 text-center text-xs text-muted-foreground">
@@ -633,6 +686,18 @@ function TrustCard() {
           </p>
         </li>
       </ul>
+
+      <div className="mt-5 flex items-center gap-3 border-t border-border pt-4">
+        <img
+          src={paypalBuyerProtection}
+          alt="PayPal Buyer Protection"
+          className="h-10 w-auto shrink-0 object-contain"
+        />
+        <p className="text-xs leading-snug text-muted-foreground">
+          <strong className="font-semibold text-foreground">Buy with added confidence.</strong>{" "}
+          Eligible payments are processed through PayPal and may qualify for PayPal Purchase Protection.
+        </p>
+      </div>
     </div>
   );
 }
